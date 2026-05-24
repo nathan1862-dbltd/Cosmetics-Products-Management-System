@@ -1,12 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-gradient-pink">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient-pink cpms-topbar">
   <div class="container px-3 px-lg-5">
     <div class="d-flex align-items-center w-100">
-      <a class="navbar-brand mr-2" href="./">
+      <a class="navbar-brand mr-2 cpms-topbar__brand" href="./">
         <img src="<?php echo validate_image($_settings->info('logo')) ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
         <?php echo $_settings->info('short_name') ?>
       </a>
 
-      <form class="form-inline flex-grow-1 mx-2" id="search-form">
+      <form class="form-inline flex-grow-1 mx-2 cpms-topbar__search" id="search-form">
         <div class="input-group w-100">
           <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search" name="search" value="<?php echo isset($_GET['search']) ? $_GET['search'] : "" ?>" aria-describedby="button-addon2">
           <div class="input-group-append">
@@ -16,7 +16,7 @@
       </form>
 
       <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
-      <a class="nav-link text-white d-lg-none p-0" href="./?p=cart" aria-label="Cart">
+      <a class="nav-link text-white d-lg-none p-0 cpms-topbar__mobile-cart" href="./?p=cart" aria-label="Cart">
         <i class="bi-cart-fill"></i>
         <span class="badge bg-dark text-white rounded-pill" id="cart-count-mobile">
           <?php 
