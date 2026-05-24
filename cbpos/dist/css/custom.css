@@ -172,3 +172,46 @@ a.card.product-item:hover {
 a.card.product-item:hover .product-cover {
     transform: scale(1.2);
 }
+/* Storefront top bar responsive layout */
+.cpms-topbar .container {
+    row-gap: .5rem;
+}
+
+.cpms-topbar__brand {
+    white-space: nowrap;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cpms-topbar__search {
+    min-width: 0;
+}
+
+.cpms-topbar__mobile-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: .25rem;
+}
+
+#cart-count-mobile {
+    min-width: 1.25rem;
+    line-height: 1.1;
+    font-size: .75rem;
+}
+
+@media (min-width: 992px) {
+    .cpms-topbar .container {
+        row-gap: 0;
+    }
+
+    .cpms-topbar__brand {
+        max-width: none;
+    }
+
+    .cpms-topbar__search {
+        max-width: 360px;
+        margin-right: 1rem;
+    }
+}
