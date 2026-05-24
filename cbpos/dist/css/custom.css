@@ -172,3 +172,106 @@ a.card.product-item:hover {
 a.card.product-item:hover .product-cover {
     transform: scale(1.2);
 }
+/* Storefront top bar responsive layout */
+.cpms-topbar .container {
+    row-gap: .5rem;
+}
+
+.cpms-topbar__brand {
+    white-space: nowrap;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cpms-topbar__search {
+    min-width: 0;
+}
+
+.cpms-topbar__mobile-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: .25rem;
+}
+
+#cart-count-mobile {
+    min-width: 1.25rem;
+    line-height: 1.1;
+    font-size: .75rem;
+}
+
+@media (min-width: 992px) {
+    .cpms-topbar .container {
+        row-gap: 0;
+    }
+
+    .cpms-topbar__brand {
+        max-width: none;
+    }
+
+    .cpms-topbar__search {
+        max-width: 360px;
+        margin-right: 1rem;
+    }
+}
+
+/* Delux Beauti top bar theme */
+.cpms-topbar {
+    background: #fff;
+    border-bottom: 1px solid #000;
+}
+
+.cpms-topbar .navbar-toggler,
+.cpms-topbar .nav-link,
+.cpms-topbar i {
+    color: #000 !important;
+}
+
+.cpms-topbar .navbar-toggler {
+    border-color: #000;
+}
+
+.cpms-topbar .nav-link {
+    font-weight: 500;
+}
+
+.cpms-topbar__brand-logo {
+    height: 44px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.cpms-topbar__search .form-control,
+.cpms-topbar__search .btn {
+    border: 1px solid #000 !important;
+    color: #000;
+    background: #fff;
+}
+
+.cpms-topbar__search .form-control::placeholder {
+    color: #444;
+}
+
+.cpms-topbar__mobile-cart,
+.cpms-topbar__desktop-actions .nav-link,
+.cpms-topbar__login-btn {
+    color: #000 !important;
+}
+
+#cart-count,
+#cart-count-mobile {
+    background: #000;
+    color: #fff;
+}
+
+@media (max-width: 991.98px) {
+    .cpms-topbar__brand-logo {
+        height: 36px;
+    }
+
+    .cpms-topbar__brand {
+        max-width: 42%;
+    }
+}
