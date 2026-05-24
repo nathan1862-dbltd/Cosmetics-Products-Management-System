@@ -29,36 +29,17 @@
       <?php endif; ?>
     </div>
 
-    <button class="navbar-toggler btn btn-sm ml-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto mb-2 mb-lg-0 ml-lg-4">
-        <li class="nav-item"><a class="nav-link" aria-current="page" href="./">Home</a></li>
-        <?php 
-        $cat_qry = $conn->query("SELECT * FROM categories where status = 1  limit 3");
-        $count_cats =$conn->query("SELECT * FROM categories where status = 1 ")->num_rows;
-        while($crow = $cat_qry->fetch_assoc()):
-        ?>
-        <li class="nav-item"><a class="nav-link" aria-current="page" href="./?p=products&c=<?php echo md5($crow['id']) ?>"><?php echo $crow['category'] ?></a></li>
-        <?php endwhile; ?>
-        <?php if($count_cats > 3): ?>
-        <li class="nav-item"><a class="nav-link" href="./?p=view_categories">All Categories</a></li>
-        <?php endif; ?>
-        <li class="nav-item"><a class="nav-link" href="./?p=about">About</a></li>
-      </ul>
-
-      <div class="d-none d-lg-flex align-items-center cpms-topbar__desktop-actions">
-        <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
-          <a class="mr-3 nav-link" href="./?p=cart" aria-label="Cart">
-            <i class="bi-cart-fill mr-1"></i>
-            <span class="badge ml-1 rounded-pill" id="cart-count"><?php echo ($count > 0 ? $count : 0); ?></span>
-          </a>
-          <a href="./?p=my_account" class="nav-link" aria-label="My Account"><i class="fa fa-user-circle mr-1"></i> My Account</a>
-          <a href="logout.php" class="nav-link" aria-label="Logout"><i class="fa fa-sign-out-alt"></i></a>
-        <?php else: ?>
-          <button class="btn btn-sm cpms-topbar__login-btn" id="login-btn-desktop" type="button">Login</button>
-        <?php endif; ?>
-      </div>
+    <div class="d-none d-lg-flex align-items-center cpms-topbar__desktop-actions ml-3">
+      <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
+        <a class="mr-3 nav-link" href="./?p=cart" aria-label="Cart">
+          <i class="bi-cart-fill mr-1"></i>
+          <span class="badge ml-1 rounded-pill" id="cart-count"><?php echo ($count > 0 ? $count : 0); ?></span>
+        </a>
+        <a href="./?p=my_account" class="nav-link" aria-label="My Account"><i class="fa fa-user-circle mr-1"></i> My Account</a>
+        <a href="logout.php" class="nav-link" aria-label="Logout"><i class="fa fa-sign-out-alt"></i></a>
+      <?php else: ?>
+        <button class="btn btn-sm cpms-topbar__login-btn" id="login-btn-desktop" type="button">Login</button>
+      <?php endif; ?>
     </div>
   </div>
 </nav>
