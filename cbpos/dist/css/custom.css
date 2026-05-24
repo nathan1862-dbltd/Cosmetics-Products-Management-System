@@ -223,10 +223,13 @@ a.card.product-item:hover .product-cover {
 }
 
 .cpms-topbar .navbar-toggler,
-.cpms-topbar .navbar-toggler-icon,
 .cpms-topbar .nav-link,
 .cpms-topbar i {
     color: #000 !important;
+}
+
+.cpms-topbar .navbar-toggler {
+    border-color: #000;
 }
 
 .cpms-topbar .nav-link {
