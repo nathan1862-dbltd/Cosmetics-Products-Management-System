@@ -195,9 +195,15 @@ a.card.product-item:hover .product-cover {
 
 .cpms-topbar__brand-logo {
     display: block;
-    height: 32px;          /* fixed height, or use max-height */
-    width: auto;           /* keep aspect ratio */
+    width: auto;
+    height: auto;
+    max-height: 44px;
     max-width: 100%;
+    object-fit: contain;
+}
+
+.cpms-topbar__brand {
+    flex-shrink: 0;
 }
 
 .cpms-topbar__search .form-control,
@@ -225,10 +231,6 @@ a.card.product-item:hover .product-cover {
 
 @media (max-width: 991.98px) {
     .cpms-topbar__brand-logo {
-        height: 36px;
-    }
-
-    .cpms-topbar__brand {
-        max-width: 42%;
+        max-height: 36px;
     }
 }
