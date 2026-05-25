@@ -49,6 +49,7 @@
       uni_modal("","login.php")
     })
   })
+  
 
   $('#search-form').submit(function(e){
     e.preventDefault()
