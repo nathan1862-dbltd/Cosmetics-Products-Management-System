@@ -7,7 +7,9 @@
         height:280px !important;
     }
 </style>
-
+<?php 
+$brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
+?>
 <section class="py-0">
     <div class="container">
     <div class="row">
