@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light cpms-topbar">
   <div class="container px-3 px-lg-5">
     <div class="d-flex align-items-center w-100 cpms-topbar__row">
-      <a class="navbar-brand mr-2 cpms-topbar__brand" href="./" aria-label="Delux Beauti Home">
+      <a class="cpms-topbar__brand" href="./" aria-label="Delux Beauti Home">
         <img src="<?php echo base_url ?>assets/img/delux-beauti-logo.png" class="cpms-topbar__brand-logo" alt="Delux Beauti" loading="lazy">
       </a>
 
