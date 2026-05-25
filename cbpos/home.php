@@ -13,32 +13,7 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
 <section class="py-0">
     <div class="container">
     <div class="row">
-        <div class="col-lg-2 px-1 border-right text-sm position-sticky ">
-            <h4><b>Brands</b></h4>
-            <ul class="list-group">
-                <a href="" class="list-group-item list-group-item-action">
-                    <div class="icheck-primary d-inline">
-                        <input type="checkbox" id="brandAll" >
-                        <label for="brandAll">
-                             All
-                        </label>
-                    </div>
-                </a>
-                <?php 
-                $qry = $conn->query("SELECT * FROM brands where status =1 order by name asc");
-                while($row=$qry->fetch_assoc()):
-                ?>
-                <li class="list-group-item list-group-item-action">
-                    <div class="icheck-primary d-inline">
-                        <input type="checkbox" id="brand-item-<?php echo $row['id'] ?>" <?php echo in_array($row['id'],$brands) ? "checked" : "" ?> class="brand-item" value="<?php echo $row['id'] ?>">
-                        <label for="brand-item-<?php echo $row['id'] ?>">
-                                <?php echo $row['name'] ?>
-                        </label>
-                    </div>
-                </li>
-                <?php endwhile; ?>
-            </ul>
-        </div>
+               
         <div class="col-lg-10 py-2">
             <div class="row">
                 <div class="col-md-12">
