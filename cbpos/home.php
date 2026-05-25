@@ -13,32 +13,7 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
 <section class="py-0">
     <div class="container">
     <div class="row">
-        <div class="col-lg-2 px-1 border-right text-sm position-sticky ">
-            <h4><b>Brands</b></h4>
-            <ul class="list-group">
-                <a href="" class="list-group-item list-group-item-action">
-                    <div class="icheck-primary d-inline">
-                        <input type="checkbox" id="brandAll" >
-                        <label for="brandAll">
-                             All
-                        </label>
-                    </div>
-                </a>
-                <?php 
-                $qry = $conn->query("SELECT * FROM brands where status =1 order by name asc");
-                while($row=$qry->fetch_assoc()):
-                ?>
-                <li class="list-group-item list-group-item-action">
-                    <div class="icheck-primary d-inline">
-                        <input type="checkbox" id="brand-item-<?php echo $row['id'] ?>" <?php echo in_array($row['id'],$brands) ? "checked" : "" ?> class="brand-item" value="<?php echo $row['id'] ?>">
-                        <label for="brand-item-<?php echo $row['id'] ?>">
-                                <?php echo $row['name'] ?>
-                        </label>
-                    </div>
-                </li>
-                <?php endwhile; ?>
-            </ul>
-        </div>
+               
         <div class="col-lg-10 py-2">
             <div class="row">
                 <div class="col-md-12">
@@ -105,23 +80,15 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                             }
                     ?>
                     <div class="col mb-5">
-                        <a class="card product-item text-reset text-decoration-none" href=".?p=view_product&id=<?php echo md5($row['id']) ?>">
-                            <!-- Product image-->
-                            <div class="overflow-hidden shadow product-holder">
-                            <img class="card-img-top w-100 product-cover" src="<?php echo validate_image($img) ?>" alt="..." />
-                            </div>
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder"><?php echo $row['name'] ?></h5>
-                                    <!-- Product price-->
-                                        <span><b class="text-muted">Price: </b><?php echo $price ?></span>
-                                </div>
-                                <p class="m-0"><small><span class="text-muted">Brand:</span> <?php echo $row['bname'] ?></small></p>
-                                <p class="m-0"><small><span class="text-muted">Category:</span> <?php echo $row['category'] ?></small></p>
-                            </div>
-                        </a>
+                        <?php
+                            $product_id = $row['id'];
+                            $product_name = $row['name'];
+                            $product_brand = $row['bname'];
+                            $product_category = $row['category'];
+                            $product_price = $price;
+                            $product_image = $img;
+                            include base_app . '/inc/product_card.php';
+                        ?>
                     </div>
                     <?php endwhile; ?>
                 </div>

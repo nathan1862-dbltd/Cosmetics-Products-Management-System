@@ -120,23 +120,15 @@
                 }
         ?>
             <div class="col mb-5">
-                <a class="card product-item text-reset text-decoration-none" href=".?p=view_product&id=<?php echo md5($row['id']) ?>">
-                    <!-- Product image-->
-                    <div class="overflow-hidden shadow product-holder">
-                        <img class="card-img-top w-100 product-cover" src="<?php echo validate_image($img) ?>" alt="..." />
-                    </div>
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder"><?php echo $row['name'] ?></h5>
-                            <!-- Product price-->
-                            <span><b class="text-muted">Price: </b><?php echo $price ?></span>
-                            <p class="m-0"><small>Brand: <?php echo $row['bname'] ?></small></p>
-                            <p class="m-0"><small><span class="text-muted">Category:</span> <?php echo $row['category'] ?></small></p>
-                        </div>
-                    </div>
-                </a>
+                <?php
+                    $product_id = $row['id'];
+                    $product_name = $row['name'];
+                    $product_brand = $row['bname'];
+                    $product_category = $row['category'];
+                    $product_price = $price;
+                    $product_image = $img;
+                    include base_app . '/inc/product_card.php';
+                ?>
             </div>
             <?php endwhile; ?>
         </div>
