@@ -229,6 +229,6 @@ a.card.product-item:hover .product-cover {
     }
 
     .cpms-topbar__brand {
-        max-width: 42%;
+        max-width: auto;
     }
 }
