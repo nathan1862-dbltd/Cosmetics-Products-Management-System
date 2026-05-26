@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light navbar-header">
+ါ​ေ<nav class="navbar navbar-expand-lg navbar-light navbar-header">
   <div class="container px-3 px-lg-5">
 
     <div class="d-flex align-items-center w-100 header-row">
@@ -35,7 +35,7 @@
       </form>
 
       <!-- MOBILE CART ALWAYS VISIBLE -->
-<a class="nav-link d-lg-none mobile-cart"
+<a class="nav-link d-lg-none mobile-cart flex-shrink-0"
    href="./?p=cart"
    aria-label="Cart">
 
