@@ -39,7 +39,16 @@
    href="./?p=cart"
    aria-label="Cart">
 
-  <i class="bi-cart-fill"></i>
+  <svg class="cart-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <path d="M3 4H5L7.2 14.4C7.3 14.9 7.7 15.2 8.2 15.2H17.4C17.9 15.2 18.3 14.9 18.4 14.4L20 7H6" 
+        stroke="currentColor" 
+        stroke-width="1.8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+        
+  <circle cx="9" cy="19" r="1.5" fill="currentColor"/>
+  <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
+</svg>
 
   <span class="badge rounded-pill"
         id="cart-count-mobile">
