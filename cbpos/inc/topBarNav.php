@@ -62,17 +62,7 @@
 </a>
 
       <!-- MOBILE LOGIN -->
-      <?php if($_settings->userdata('id') <= 0 || $_settings->userdata('login_type') != 2): ?>
-
-      <button class="btn btn-sm login-btn d-lg-none"
-              id="login-btn"
-              type="button">
-        Login
-      </button>
-
-      <?php endif; ?>
-
-    </div>
+      
 
     <!-- DESKTOP ACTIONS -->
     <div class="d-none d-lg-flex align-items-center header-actions">
