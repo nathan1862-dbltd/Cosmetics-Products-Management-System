@@ -34,27 +34,32 @@
         </div>
       </form>
 
-      <!-- MOBILE CART -->
-      <a class="nav-link d-lg-none mobile-cart"
-         href="./?p=cart"
-         aria-label="Cart">
+      <!-- MOBILE CART ALWAYS VISIBLE -->
+<a class="nav-link d-lg-none mobile-cart"
+   href="./?p=cart"
+   aria-label="Cart">
 
-        <i class="bi-cart-fill"></i>
+  <i class="bi-cart-fill"></i>
 
-        <span class="badge rounded-pill"
-              id="cart-count-mobile">
+  <span class="badge rounded-pill"
+        id="cart-count-mobile">
 
-          <?php 
-            if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
-                $count = $conn->query("SELECT SUM(quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
-                echo ($count > 0 ? $count : 0);
-            } else {
-                echo 0;
-            }
-          ?>
+    <?php 
+      if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
-        </span>
-      </a>
+          $count = $conn->query("SELECT SUM(quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
+
+          echo ($count > 0 ? $count : 0);
+
+      } else {
+
+          echo 0;
+
+      }
+    ?>
+
+  </span>
+</a>
 
       <!-- MOBILE LOGIN -->
       <?php if($_settings->userdata('id') <= 0 || $_settings->userdata('login_type') != 2): ?>
