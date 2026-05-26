@@ -1,4 +1,4 @@
-ါ​ေ<nav class="navbar navbar-expand-lg navbar-light navbar-header">
+<nav class="navbar navbar-expand-lg navbar-light navbar-header">
   <div class="container px-3 px-lg-5">
 
     <div class="d-flex align-items-center w-100 header-row">
