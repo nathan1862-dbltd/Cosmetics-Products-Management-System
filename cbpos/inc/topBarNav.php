@@ -39,16 +39,9 @@
    href="./?p=cart"
    aria-label="Cart">
 
-  <svg class="cart-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-  <path d="M3 4H5L7.2 14.4C7.3 14.9 7.7 15.2 8.2 15.2H17.4C17.9 15.2 18.3 14.9 18.4 14.4L20 7H6" 
-        stroke="currentColor" 
-        stroke-width="1.8" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"/>
-        
-  <circle cx="9" cy="19" r="1.5" fill="currentColor"/>
-  <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
-</svg>
+  <?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="Filled" viewBox="0 0 24 24" width="512" height="512"><path d="M22.713,4.077A2.993,2.993,0,0,0,20.41,3H4.242L4.2,2.649A3,3,0,0,0,1.222,0H1A1,1,0,0,0,1,2h.222a1,1,0,0,1,.993.883l1.376,11.7A5,5,0,0,0,8.557,19H19a1,1,0,0,0,0-2H8.557a3,3,0,0,1-2.82-2h11.92a5,5,0,0,0,4.921-4.113l.785-4.354A2.994,2.994,0,0,0,22.713,4.077Z"/><circle cx="7" cy="22" r="2"/><circle cx="17" cy="22" r="2"/></svg>
+
 
   <span class="badge rounded-pill"
         id="cart-count-mobile">
@@ -254,8 +247,8 @@
 ========================= */
 
 .cart-svg{
-    width:22px;
-    height:22px;
+    width:35px;
+    height:35px;
     display:block;
 }
 
