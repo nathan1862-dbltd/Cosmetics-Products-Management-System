@@ -13,6 +13,6 @@
         <h5 class="fw-bolder product-title mb-2"><?php echo $product_name ?></h5>
         <span class="mb-2"><b class="text-muted">Price: </b><?php echo $product_price ?></span>
         <p class="m-0"><small><span class="text-muted">Brand:</span> <?php echo $product_brand ?></small></p>
-        <p class="m-0"><small><span class="text-muted">Category:</span> <?php echo $product_category ?></small></p>
+        
     </div>
 </a>
