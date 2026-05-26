@@ -310,7 +310,7 @@
 @media (max-width:768px){
 
     .navbar-header{
-        min-height:52px;
+        min-height:60px;
         padding:5px 0;
     }
 
