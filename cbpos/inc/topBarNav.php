@@ -34,9 +34,7 @@
         </div>
       </form>
 
-      <!-- MOBILE ACTION -->
-      <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
-
+      <!-- MOBILE CART -->
       <a class="nav-link d-lg-none mobile-cart"
          href="./?p=cart"
          aria-label="Cart">
@@ -47,14 +45,19 @@
               id="cart-count-mobile">
 
           <?php 
-            $count = $conn->query("SELECT SUM(quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
-            echo ($count > 0 ? $count : 0);
+            if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
+                $count = $conn->query("SELECT SUM(quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
+                echo ($count > 0 ? $count : 0);
+            } else {
+                echo 0;
+            }
           ?>
 
         </span>
       </a>
 
-      <?php else: ?>
+      <!-- MOBILE LOGIN -->
+      <?php if($_settings->userdata('id') <= 0 || $_settings->userdata('login_type') != 2): ?>
 
       <button class="btn btn-sm login-btn d-lg-none"
               id="login-btn"
@@ -69,8 +72,7 @@
     <!-- DESKTOP ACTIONS -->
     <div class="d-none d-lg-flex align-items-center header-actions">
 
-      <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
-
+      <!-- CART ALWAYS VISIBLE -->
       <a class="nav-link desktop-cart"
          href="./?p=cart"
          aria-label="Cart">
@@ -80,35 +82,43 @@
         <span class="badge rounded-pill"
               id="cart-count">
 
-          <?php echo ($count > 0 ? $count : 0); ?>
+          <?php 
+            if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
+                echo ($count > 0 ? $count : 0);
+            } else {
+                echo 0;
+            }
+          ?>
 
         </span>
       </a>
 
-      <a href="./?p=my_account"
-         class="nav-link account-link"
-         aria-label="My Account">
+      <?php if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2): ?>
 
-         <i class="fa fa-user-circle mr-1"></i>
-         My Account
+        <a href="./?p=my_account"
+           class="nav-link account-link"
+           aria-label="My Account">
 
-      </a>
+           <i class="fa fa-user-circle mr-1"></i>
+           My Account
 
-      <a href="logout.php"
-         class="nav-link logout-link"
-         aria-label="Logout">
+        </a>
 
-         <i class="fa fa-sign-out-alt"></i>
+        <a href="logout.php"
+           class="nav-link logout-link"
+           aria-label="Logout">
 
-      </a>
+           <i class="fa fa-sign-out-alt"></i>
+
+        </a>
 
       <?php else: ?>
 
-      <button class="btn btn-sm login-btn"
-              id="login-btn-desktop"
-              type="button">
-        Login
-      </button>
+        <button class="btn btn-sm login-btn"
+                id="login-btn-desktop"
+                type="button">
+          Login
+        </button>
 
       <?php endif; ?>
 
@@ -266,6 +276,7 @@
 
 .login-btn:hover{
     background:#222;
+    color:#fff;
 }
 
 /* =========================
