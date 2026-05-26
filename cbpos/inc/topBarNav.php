@@ -229,11 +229,11 @@
 ========================= */
 
 .badge{
-    background:#000;
+    background:#cc2230;
     color:#fff;
-    font-size:11px;
-    min-width:18px;
-    height:18px;
+    font-size:8px;
+    min-width:15px;
+    height:15px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
