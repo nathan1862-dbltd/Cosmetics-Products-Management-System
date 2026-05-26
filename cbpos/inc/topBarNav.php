@@ -249,7 +249,34 @@
 /* =========================
    MOBILE CART
 ========================= */
+/* =========================
+   SVG CART ICON
+========================= */
 
+.cart-svg{
+    width:22px;
+    height:22px;
+    display:block;
+}
+
+.desktop-cart .cart-svg{
+    width:20px;
+    height:20px;
+}
+
+.mobile-cart{
+    position:relative;
+    color:#000 !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.desktop-cart{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
 .mobile-cart{
     position:relative;
     color:#000 !important;
