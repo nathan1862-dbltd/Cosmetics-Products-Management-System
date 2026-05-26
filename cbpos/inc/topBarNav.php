@@ -247,8 +247,8 @@
 ========================= */
 
 .cart-svg{
-    width:35px;
-    height:35px;
+    width:40px;
+    height:40px;
     display:block;
 }
 
@@ -279,8 +279,8 @@
 
 .mobile-cart .badge{
     position:absolute;
-    top:-6px;
-    right:-10px;
+    top:0px;
+    right:-5px;
 }
 
 /* =========================
