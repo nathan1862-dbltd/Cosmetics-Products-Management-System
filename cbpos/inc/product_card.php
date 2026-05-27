@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Reusable product card for product listings and sliders.
  * Expected variables:
