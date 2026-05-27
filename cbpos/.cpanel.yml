@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/thebertg/cos.thebizportwebs.online
+    - export DEPLOYPATH=/home/thebertg/cos.thebizportwebs.online/cbpos
     - /bin/cp -R cbpos/* $DEPLOYPATH
