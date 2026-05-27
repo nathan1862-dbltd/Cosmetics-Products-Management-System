@@ -48,50 +48,21 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                 </div>
             </div>
             <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-4 row-cols-md-3 row-cols-xl-4 ">
-                    <?php 
-                        $where = "";
-                        if(count($brands)>0)
+                <h2 class="fw-bolder mb-4">New Arrivals</h2>
+                <?php
+                    $where = "";
+                    if(count($brands)>0)
                         $where = " and p.brand_id in (".implode(",",$brands).") " ;
-                        $products = $conn->query("SELECT p.*,b.name as bname,c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 {$where} order by rand() ");
-                        while($row = $products->fetch_assoc()):
-                            $upload_path = base_app.'/uploads/product_'.$row['id'];
-                            $img = "";
-                            if(is_dir($upload_path)){
-                                $fileO = scandir($upload_path);
-                                if(isset($fileO[2]))
-                                    $img = "uploads/product_".$row['id']."/".$fileO[2];
-                                // var_dump($fileO);
-                            }
-                            foreach($row as $k=> $v){
-                                $row[$k] = trim(stripslashes($v));
-                            }
-                            $inventory = $conn->query("SELECT distinct(`price`) FROM inventory where product_id = ".$row['id']." order by `price` asc");
-                            $inv = array();
-                            while($ir = $inventory->fetch_assoc()){
-                                $inv[] = format_num($ir['price']);
-                            }
-                            $price = '';
-                            if(isset($inv[0]))
-                            $price .= $inv[0];
-                            if(count($inv) > 1){
-                            $price .= " ~ ".$inv[count($inv) - 1];
 
-                            }
-                    ?>
-                    <div class="col mb-5">
-                        <?php
-                            $product_id = $row['id'];
-                            $product_name = $row['name'];
-                            $product_brand = $row['bname'];
-                            $product_category = $row['category'];
-                            $product_price = $price;
-                            $product_image = $img;
-                            include base_app . '/inc/product_card.php';
-                        ?>
-                    </div>
-                    <?php endwhile; ?>
-                </div>
+                    $product_list = array();
+                    $product_query = $conn->query("SELECT p.*,b.name as bname,c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 {$where} order by rand()");
+                    while($row = $product_query->fetch_assoc()){
+                        $product_list[] = $row;
+                    }
+                    $slider_id = "new-arrivals-slider";
+                    $products = $product_list;
+                    include base_app . '/inc/product_slider.php';
+                ?>
             </div>
         </div>
     </div>
