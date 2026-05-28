@@ -59,12 +59,96 @@
   })
 </script>
 <!-- Footer-->
-<footer class="py-4 bg-gradient-pink">
-            <div class="container">
-              <p class="m-0 text-center text-white">Copyright &copy; <?php echo $_settings->info('short_name') ?> 2024</p>
-              <p class="m-0 text-center text-white">Developed By: Robi & Tanim</a></p>
-          </div>
-        </footer>
+<footer class="sephora-footer">
+  <div class="sephora-footer__top">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-3 sephora-footer__section">
+          <details class="sephora-footer__accordion" open>
+            <summary class="sephora-footer__heading">About <?php echo $_settings->info('short_name') ?></summary>
+            <ul class="sephora-footer__list">
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Store Locator</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Sustainability</a></li>
+            </ul>
+          </details>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 sephora-footer__section">
+          <details class="sephora-footer__accordion">
+            <summary class="sephora-footer__heading">Customer Service</summary>
+            <ul class="sephora-footer__list">
+              <li><a href="#">Shipping & Returns</a></li>
+              <li><a href="#">Order Tracking</a></li>
+              <li><a href="#">FAQs</a></li>
+              <li><a id="p_use" href="javascript:void(0)">Privacy Policy</a></li>
+            </ul>
+          </details>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 sephora-footer__section">
+          <details class="sephora-footer__accordion">
+            <summary class="sephora-footer__heading">Beauty Community</summary>
+            <ul class="sephora-footer__list">
+              <li><a href="#">Gift Cards</a></li>
+              <li><a href="#">Rewards Program</a></li>
+              <li><a href="#">Virtual Consultations</a></li>
+              <li><a href="#">Beauty Insider</a></li>
+            </ul>
+          </details>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 sephora-footer__section">
+          <details class="sephora-footer__accordion">
+            <summary class="sephora-footer__heading">Get Beauty Updates</summary>
+            <p class="sephora-footer__copy">Sign up for exclusive deals, product drops, and skincare tips.</p>
+            <form class="sephora-footer__form" action="#" method="post">
+              <input type="email" placeholder="Enter your email" aria-label="Email address">
+              <button type="button">Sign Up</button>
+            </form>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sephora-footer__bottom">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <p class="m-0">&copy; <?php echo date('Y'); ?> <?php echo $_settings->info('short_name') ?>. All rights reserved.</p>
+      <p class="m-0">Developed by: Robi &amp; Tanim</p>
+    </div>
+  </div>
+</footer>
+<style>
+  .sephora-footer { background:#000; color:#fff; margin-top:3rem; }
+  .sephora-footer__top { border-top:1px solid #2f2f2f; border-bottom:1px solid #2f2f2f; padding:2.5rem 0; }
+  .sephora-footer__heading { color:#fff; font-size:1rem; letter-spacing:.04em; text-transform:uppercase; margin-bottom:1rem; font-weight:700; list-style:none; cursor:pointer; }
+  .sephora-footer__heading::-webkit-details-marker { display:none; }
+  .sephora-footer__accordion[open] .sephora-footer__heading { margin-bottom:1rem; }
+  .sephora-footer__list { list-style:none; margin:0; padding:0; }
+  .sephora-footer__list li { margin-bottom:.55rem; }
+  .sephora-footer__list a { color:#d0d0d0; text-decoration:none; font-size:.93rem; }
+  .sephora-footer__list a:hover { color:#fff; text-decoration:underline; }
+  .sephora-footer__copy { color:#d0d0d0; font-size:.93rem; margin-bottom:.85rem; }
+  .sephora-footer__form { display:flex; gap:.5rem; }
+  .sephora-footer__form input { flex:1; min-width:0; border:1px solid #555; background:#111; color:#fff; padding:.55rem .7rem; border-radius:0; }
+  .sephora-footer__form input::placeholder { color:#979797; }
+  .sephora-footer__form button { border:1px solid #fff; background:#fff; color:#000; padding:.55rem 1rem; font-weight:600; text-transform:uppercase; font-size:.75rem; letter-spacing:.05em; }
+  .sephora-footer__form button:hover { background:#000; color:#fff; }
+  .sephora-footer__bottom { padding:1rem 0; font-size:.85rem; color:#bdbdbd; }
+  @media (max-width: 767.98px) {
+    .sephora-footer__top { padding:1.25rem 0; }
+    .sephora-footer__section { border-bottom:1px solid #2a2a2a; padding-bottom:.75rem; }
+    .sephora-footer__heading { margin:0; padding:.25rem 0; position:relative; }
+    .sephora-footer__heading::after { content:'+'; position:absolute; right:0; top:0; color:#fff; }
+    .sephora-footer__accordion[open] .sephora-footer__heading::after { content:'−'; }
+    .sephora-footer__accordion > *:not(summary) { padding-top:.75rem; }
+    .sephora-footer__form { flex-direction:column; }
+    .sephora-footer__form button { width:100%; }
+  }
+  @media (min-width: 768px) {
+    .sephora-footer__accordion { display:block; }
+    .sephora-footer__accordion > summary { pointer-events:none; }
+    .sephora-footer__accordion > *:not(summary) { display:block !important; }
+  }
+</style>
 
    
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
