@@ -151,11 +151,12 @@
 </style>
 
    
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <!-- Resolve jQuery UI and Bootstrap widget conflicts before Bootstrap registers its plugins. -->
     <script>
+      $.widget.bridge('uitooltip', $.ui.tooltip)
       $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <!-- Bootstrap 4 -->
+    <!-- Bootstrap 4: loaded after the bridge so Bootstrap remains the default tooltip(). -->
     <script src="<?php echo base_url ?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- ChartJS -->
     <script src="<?php echo base_url ?>plugins/chart.js/Chart.min.js"></script>
