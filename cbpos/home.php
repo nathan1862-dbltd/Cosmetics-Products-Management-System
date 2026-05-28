@@ -49,21 +49,7 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
             </div>
             <div class="container px-4 px-lg-5 mt-5">
                 <h2 class="fw-bolder mb-4">New Arrivals</h2>
-                <?php
-                    $where = "";
-                    if(count($brands)>0)
-                        $where = " and p.brand_id in (".implode(",",$brands).") " ;
-
-                    $product_list = array();
-                    $product_query = $conn->query("SELECT p.*,b.name as bname,c.category FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 {$where} order by rand()");
-                    while($row = $product_query->fetch_assoc()){
-                        $product_list[] = $row;
-                    }
-                    $slider_id = "new-arrivals-slider";
-                    $products = $product_list;
-                    include base_app . '/inc/product_slider.php';
-                ?>
-            </div>
+                <?php include base_app . '/inc/new_arrival_slider.php'; ?>
         </div>
     </div>
     </div>
