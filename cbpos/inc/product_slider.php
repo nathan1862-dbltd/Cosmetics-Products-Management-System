@@ -2,39 +2,104 @@
 if (!isset($products) || !is_array($products) || empty($products)) {
     return;
 }
-
-$chunked_products = array_chunk($products, 4);
 ?>
 
+<div class="product-slider-wrapper">
+
+    <button class="slider-btn prev-btn">&#10094;</button>
+
+    <div class="product-slider-track" id="<?php echo $slider_id; ?>">
+
+        <?php foreach($products as $row): ?>
+
+            <?php
+            $upload_path = base_app . '/uploads/product_' . $row['id'];
+            $img = '';
+
+            if(is_dir($upload_path)){
+                $fileO = scandir($upload_path);
+                if(isset($fileO[2])){
+                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
+                }
+            }
+
+            $inventory = $conn->query("
+                SELECT DISTINCT(price)
+                FROM inventory
+                WHERE product_id = {$row['id']}
+                ORDER BY price ASC
+            ");
+
+            $inv = [];
+
+            while($ir = $inventory->fetch_assoc()){
+                $inv[] = format_num($ir['price']);
+            }
+
+            $price = '';
+            if(isset($inv[0])) $price = $inv[0];
+            if(count($inv) > 1) $price .= ' ~ '.end($inv);
+            ?>
+
+            <div class="product-slide">
+
+                <a href="./?p=view_product&id=<?php echo $row['id']; ?>" class="product-link">
+
+                    <div class="product-card">
+
+                        <img
+                            src="<?php echo validate_image($img); ?>"
+                            alt="<?php echo htmlspecialchars($row['name']); ?>"
+                            class="product-image">
+
+                        <div class="product-info">
+
+                            <div class="product-name">
+                                <?php echo htmlspecialchars($row['name']); ?>
+                            </div>
+
+                            <div class="product-brand">
+                                <?php echo htmlspecialchars($row['bname']); ?>
+                            </div>
+
+                            <?php if(!empty($price)): ?>
+                                <div class="product-price">
+                                    $<?php echo $price; ?>
+                                </div>
+                            <?php endif; ?>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        <?php endforeach; ?>
+
+    </div>
+
+    <button class="slider-btn next-btn">&#10095;</button>
+
+</div>
+
 <style>
+
 .product-slider-wrapper{
-    overflow:hidden;
+    position:relative;
     width:100%;
+    overflow:hidden;
 }
 
 .product-slider-track{
     display:flex;
     gap:20px;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    scroll-behavior:smooth;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-}
-
-.product-slider-track::-webkit-scrollbar{
-    display:none;
+    transition:transform .5s ease;
 }
 
 .product-slide{
     flex:0 0 calc(25% - 15px);
-    scroll-snap-align:start;
-}
-
-@media(max-width:992px){
-    .product-slide{
-        flex:0 0 calc(33.33% - 14px);
-    }
 }
 
 @media(max-width:768px){
@@ -43,110 +108,126 @@ $chunked_products = array_chunk($products, 4);
     }
 }
 
-@media(max-width:480px){
-    .product-slide{
-        flex:0 0 85%;
-    }
+.product-link{
+    text-decoration:none;
+    color:inherit;
 }
+
+.product-card{
+    background:#fff;
+    border:1px solid #eee;
+    border-radius:12px;
+    overflow:hidden;
+    height:100%;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.product-image{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.product-info{
+    padding:15px;
+}
+
+.product-name{
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:5px;
+}
+
+.product-brand{
+    color:#777;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.product-price{
+    color:#28a745;
+    font-size:18px;
+    font-weight:700;
+}
+
+.slider-btn{
+    position:absolute;
+    top:45%;
+    transform:translateY(-50%);
+    z-index:100;
+    border:none;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    cursor:pointer;
+}
+
+.prev-btn{
+    left:10px;
+}
+
+.next-btn{
+    right:10px;
+}
+
 </style>
 
-<div class="product-slider-wrapper">
-    <div class="product-slider-track">
-
-        <?php foreach($products as $row): ?>
-
-            <div class="product-slide">
-            <?php
-
-            $upload_path = base_app . '/uploads/product_' . $row['id'];
-
-            $img = '';
-
-            if(is_dir($upload_path)){
-
-                $fileO = scandir($upload_path);
-
-                if(isset($fileO[2])){
-
-                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
-
-                }
-
-            }
-
-            $inventory = $conn->query("SELECT DISTINCT(price) FROM inventory WHERE product_id=".$row['id']." ORDER BY price ASC");
-
-            $inv = [];
-
-            while($ir = $inventory->fetch_assoc()){
-
-                $inv[] = format_num($ir['price']);
-
-            }
-
-            $price = '';
-
-            if(isset($inv[0])) $price = $inv[0];
-
-            if(count($inv) > 1) $price .= ' ~ '.end($inv);
-                $product_id = $row['id'];
-
-            $product_name = $row['name'];
-
-            $product_brand = $row['bname'];
-
-            $product_category = $row['category'];
-
-            $product_price = $price;
-
-            $product_image = $img;
-
-            ?>
-
-            <div class="product-slide">
-
-            <div class="product-slide">
-
-    <?php include base_app.'/inc/product_card.php'; ?>
-
-    <?php if(!empty($product_price)): ?>
-    <div class="slider-price">
-        $<?php echo $product_price; ?>
-    </div>
-    <?php endif; ?>
-
-</div>
-
-        <?php endforeach; ?>
-
-    </div>
-</div>
-
 <script>
-document.querySelectorAll('.product-slider-track').forEach(slider => {
 
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+document.addEventListener('DOMContentLoaded', function(){
 
-    slider.addEventListener('mousedown', e => {
-        isDown = true;
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
+    const slider = document.getElementById('<?php echo $slider_id; ?>');
+
+    const prevBtn = slider.parentElement.querySelector('.prev-btn');
+    const nextBtn = slider.parentElement.querySelector('.next-btn');
+
+    let position = 0;
+
+    function cardWidth(){
+        const card = slider.querySelector('.product-slide');
+        return card ? card.offsetWidth + 20 : 0;
+    }
+
+    nextBtn.addEventListener('click', function(){
+
+        const maxScroll = slider.scrollWidth - slider.parentElement.offsetWidth;
+
+        position += cardWidth();
+
+        if(position > maxScroll){
+            position = 0;
+        }
+
+        slider.style.transform = `translateX(-${position}px)`;
     });
 
-    slider.addEventListener('mouseleave', () => isDown = false);
-    slider.addEventListener('mouseup', () => isDown = false);
+    prevBtn.addEventListener('click', function(){
 
-    slider.addEventListener('mousemove', e => {
-        if(!isDown) return;
+        position -= cardWidth();
 
-        e.preventDefault();
+        if(position < 0){
+            position = 0;
+        }
 
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2;
-
-        slider.scrollLeft = scrollLeft - walk;
+        slider.style.transform = `translateX(-${position}px)`;
     });
+
+    setInterval(function(){
+
+        const maxScroll = slider.scrollWidth - slider.parentElement.offsetWidth;
+
+        position += cardWidth();
+
+        if(position > maxScroll){
+            position = 0;
+        }
+
+        slider.style.transform = `translateX(-${position}px)`;
+
+    }, 3000);
+
 });
+
 </script>
