@@ -2,154 +2,110 @@
 if (!isset($products) || !is_array($products) || empty($products)) {
     return;
 }
+
+$chunked_products = array_chunk($products, 4);
 ?>
 
-<div class="product-slider-wrapper">
+<div id="<?php echo $slider_id; ?>" class="carousel slide" data-ride="carousel" data-interval="5000">
 
-    <button class="slider-btn prev-btn">&#10094;</button>
+    <div class="carousel-inner">
 
-    <div class="product-slider-track" id="<?php echo $slider_id; ?>">
+        <?php foreach ($chunked_products as $chunk_index => $chunk): ?>
 
-        <?php foreach($products as $row): ?>
+            <div class="carousel-item <?php echo ($chunk_index == 0) ? 'active' : ''; ?>">
 
-            <?php
-            $upload_path = base_app . '/uploads/product_' . $row['id'];
-            $img = '';
+                <div class="row">
 
-            if(is_dir($upload_path)){
-                $fileO = scandir($upload_path);
-                if(isset($fileO[2])){
-                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
-                }
-            }
+                    <?php foreach ($chunk as $row): ?>
 
-            $inventory = $conn->query("SELECT DISTINCT(price) FROM inventory WHERE product_id=".$row['id']." ORDER BY price ASC");
+                        <?php
+                        $upload_path = base_app . '/uploads/product_' . $row['id'];
+                        $img = '';
 
-            $inv = [];
-            while($ir = $inventory->fetch_assoc()){
-                $inv[] = format_num($ir['price']);
-            }
+                        if (is_dir($upload_path)) {
+                            $fileO = scandir($upload_path);
+                            if (isset($fileO[2])) {
+                                $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
+                            }
+                        }
 
-            $price = '';
-            if(isset($inv[0])) $price = $inv[0];
-            if(count($inv) > 1) $price .= ' ~ '.end($inv);
+                        foreach ($row as $k => $v) {
+                            $row[$k] = trim(stripslashes($v));
+                        }
 
-            $product_id = $row['id'];
-            $product_name = $row['name'];
-            $product_brand = $row['bname'];
-            $product_category = $row['category'];
-            $product_price = $price;
-            $product_image = $img;
-            ?>
+                        $inventory = $conn->query("SELECT DISTINCT(price) FROM inventory WHERE product_id = {$row['id']} ORDER BY price ASC");
 
-            <div class="product-slide">
-                <?php include base_app.'/inc/product_card.php'; ?>
+                        $inv = [];
+                        while ($ir = $inventory->fetch_assoc()) {
+                            $inv[] = format_num($ir['price']);
+                        }
+
+                        $price = '';
+                        if (isset($inv[0])) {
+                            $price .= $inv[0];
+                        }
+                        if (count($inv) > 1) {
+                            $price .= ' ~ ' . end($inv);
+                        }
+
+                        $product_id = $row['id'];
+                        $product_name = $row['name'];
+                        $product_brand = $row['bname'];
+                        $product_category = $row['category'];
+                        $product_price = $price;
+                        $product_image = $img;
+                        ?>
+
+                        <div class="col-6 col-md-3 mb-4">
+                            <?php include base_app . '/inc/product_card.php'; ?>
+                        </div>
+
+                    <?php endforeach; ?>
+
+                </div>
+
             </div>
 
         <?php endforeach; ?>
 
     </div>
 
-    <button class="slider-btn next-btn">&#10095;</button>
+    <?php if (count($chunked_products) > 1): ?>
+
+        <a class="carousel-control-prev"
+           href="#<?php echo $slider_id; ?>"
+           role="button"
+           data-slide="prev">
+
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+
+        <a class="carousel-control-next"
+           href="#<?php echo $slider_id; ?>"
+           role="button"
+           data-slide="next">
+
+            <span class="carousel-control-next-icon"></span>
+        </a>
+
+    <?php endif; ?>
 
 </div>
 
 <style>
-.product-slider-wrapper{
-    position:relative;
-    width:100%;
-    overflow:hidden;
+.carousel-control-prev,
+.carousel-control-next{
+    width:50px;
 }
 
-.product-slider-track{
-    display:flex;
-    gap:20px;
-    transition:transform .5s ease;
+.carousel-control-prev-icon,
+.carousel-control-next-icon{
+    background-color:rgba(0,0,0,.6);
+    border-radius:50%;
+    padding:20px;
 }
 
-.product-slide{
-    flex:0 0 calc(25% - 15px);
-}
-
-@media(max-width:768px){
-    .product-slide{
-        flex:0 0 calc(50% - 10px);
-    }
-}
-
-.slider-btn{
-    position:absolute;
-    top:45%;
-    z-index:10;
-    border:none;
-    background:rgba(0,0,0,.6);
-    color:#fff;
-    width:40px;
-    height:40px;
-    cursor:pointer;
-}
-
-.prev-btn{
-    left:0;
-}
-
-.next-btn{
-    right:0;
+.carousel-item{
+    transition:transform .6s ease-in-out;
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-
-    const slider = document.getElementById('<?php echo $slider_id; ?>');
-
-    const prevBtn = slider.parentElement.querySelector('.prev-btn');
-    const nextBtn = slider.parentElement.querySelector('.next-btn');
-
-    const cardWidth = () => {
-        const card = slider.querySelector('.product-slide');
-        return card.offsetWidth + 20;
-    };
-
-    let position = 0;
-
-    nextBtn.addEventListener('click', function(){
-
-        const maxScroll = slider.scrollWidth - slider.parentElement.offsetWidth;
-
-        position += cardWidth();
-
-        if(position > maxScroll){
-            position = 0;
-        }
-
-        slider.style.transform = `translateX(-${position}px)`;
-    });
-
-    prevBtn.addEventListener('click', function(){
-
-        position -= cardWidth();
-
-        if(position < 0){
-            position = 0;
-        }
-
-        slider.style.transform = `translateX(-${position}px)`;
-    });
-
-    setInterval(function(){
-
-        const maxScroll = slider.scrollWidth - slider.parentElement.offsetWidth;
-
-        position += cardWidth();
-
-        if(position > maxScroll){
-            position = 0;
-        }
-
-        slider.style.transform = `translateX(-${position}px)`;
-
-    },3000);
-
-});
-</script>
