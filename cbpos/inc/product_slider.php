@@ -6,106 +6,67 @@ if (!isset($products) || !is_array($products) || empty($products)) {
 $chunked_products = array_chunk($products, 4);
 ?>
 
-<div id="<?php echo $slider_id; ?>" class="carousel slide" data-ride="carousel" data-interval="5000">
+<style>
+.product-slider-wrapper{
+    overflow:hidden;
+    width:100%;
+}
 
-    <div class="carousel-inner">
+.product-slider-track{
+    display:flex;
+    gap:20px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+}
 
-        <?php foreach ($chunked_products as $chunk_index => $chunk): ?>
+.product-slider-track::-webkit-scrollbar{
+    display:none;
+}
 
-            <div class="carousel-item <?php echo ($chunk_index == 0) ? 'active' : ''; ?>">
+.product-slide{
+    flex:0 0 calc(25% - 15px);
+    scroll-snap-align:start;
+}
 
-                <div class="row">
+@media(max-width:992px){
+    .product-slide{
+        flex:0 0 calc(33.33% - 14px);
+    }
+}
 
-                    <?php foreach ($chunk as $row): ?>
+@media(max-width:768px){
+    .product-slide{
+        flex:0 0 calc(50% - 10px);
+    }
+}
 
-                        <?php
-                        $upload_path = base_app . '/uploads/product_' . $row['id'];
-                        $img = '';
+@media(max-width:480px){
+    .product-slide{
+        flex:0 0 85%;
+    }
+}
+</style>
 
-                        if (is_dir($upload_path)) {
-                            $fileO = scandir($upload_path);
-                            if (isset($fileO[2])) {
-                                $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
-                            }
-                        }
+<div class="product-slider-wrapper">
+    <div class="product-slider-track">
 
-                        foreach ($row as $k => $v) {
-                            $row[$k] = trim(stripslashes($v));
-                        }
+        <?php foreach($products as $row): ?>
 
-                        $inventory = $conn->query("SELECT DISTINCT(price) FROM inventory WHERE product_id = {$row['id']} ORDER BY price ASC");
+            <div class="product-slide">
+                <?php
+                $product_id = $row['id'];
+                $product_name = $row['name'];
+                $product_brand = $row['bname'];
+                $product_category = $row['category'];
 
-                        $inv = [];
-                        while ($ir = $inventory->fetch_assoc()) {
-                            $inv[] = format_num($ir['price']);
-                        }
-
-                        $price = '';
-                        if (isset($inv[0])) {
-                            $price .= $inv[0];
-                        }
-                        if (count($inv) > 1) {
-                            $price .= ' ~ ' . end($inv);
-                        }
-
-                        $product_id = $row['id'];
-                        $product_name = $row['name'];
-                        $product_brand = $row['bname'];
-                        $product_category = $row['category'];
-                        $product_price = $price;
-                        $product_image = $img;
-                        ?>
-
-                        <div class="col-6 col-md-3 mb-4">
-                            <?php include base_app . '/inc/product_card.php'; ?>
-                        </div>
-
-                    <?php endforeach; ?>
-
-                </div>
-
+                include base_app . '/inc/product_card.php';
+                ?>
             </div>
 
         <?php endforeach; ?>
 
     </div>
-
-    <?php if (count($chunked_products) > 1): ?>
-
-        <a class="carousel-control-prev"
-           href="#<?php echo $slider_id; ?>"
-           role="button"
-           data-slide="prev">
-
-            <span class="carousel-control-prev-icon"></span>
-        </a>
-
-        <a class="carousel-control-next"
-           href="#<?php echo $slider_id; ?>"
-           role="button"
-           data-slide="next">
-
-            <span class="carousel-control-next-icon"></span>
-        </a>
-
-    <?php endif; ?>
-
 </div>
-
-<style>
-.carousel-control-prev,
-.carousel-control-next{
-    width:50px;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon{
-    background-color:rgba(0,0,0,.6);
-    border-radius:50%;
-    padding:20px;
-}
-
-.carousel-item{
-    transition:transform .6s ease-in-out;
-}
-</style>
