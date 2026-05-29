@@ -1,7 +1,6 @@
 <?php
 /**
- * Reusable product slider wrapper.
- *
+ * Reusable product slider wrapper – No Bootstrap, vanilla JS.
  * Expected variables:
  * - $products : array of product rows with id,name,bname,category
  * - $slider_id : unique id string for carousel
@@ -11,192 +10,195 @@ if (!isset($products) || !is_array($products) || empty($products)) {
     return;
 }
 
-// Group products into slides of 4 items each
 $chunked_products = array_chunk($products, 4);
+$total_slides = count($chunked_products);
 ?>
 
-<!-- Modern Product Slider Styles -->
 <style>
-    /* ========== SLIDER SMOOTH TRANSITIONS ========== */
-    .product-slider.modern-slider {
+    /* ----- Modern slider core ----- */
+    .custom-slider-<?php echo $slider_id; ?> {
         position: relative;
-        padding: 0 20px;
+        width: 100%;
+        overflow: hidden;
+        padding: 0 40px; /* Space for prev/next buttons */
+        box-sizing: border-box;
     }
-
-    .product-slider.modern-slider .carousel-item {
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
-    }
-
-    .product-slider.modern-slider .carousel-inner {
+    .slider-container-<?php echo $slider_id; ?> {
+        overflow: hidden;
         border-radius: 24px;
-        overflow: hidden;
     }
-
-    /* ========== MODERN CARD DESIGN ========== */
-    .product-card-modern {
+    .slider-track-<?php echo $slider_id; ?> {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+    }
+    .slider-slide-<?php echo $slider_id; ?> {
+        flex: 0 0 100%;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 4px;
+    }
+    /* ----- Responsive product grid (2 cols mobile, 4 cols desktop) ----- */
+    .product-grid-<?php echo $slider_id; ?> {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+    }
+    @media (min-width: 768px) {
+        .product-grid-<?php echo $slider_id; ?> {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+    }
+    /* ----- Modern product card ----- */
+    .product-card-<?php echo $slider_id; ?> {
         background: #ffffff;
-        border: none;
         border-radius: 20px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-        transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+        box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
         overflow: hidden;
-        height: 100%;
         display: flex;
         flex-direction: column;
+        height: 100%;
         backdrop-filter: blur(0px);
     }
-
-    .product-card-modern:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.15);
+    .product-card-<?php echo $slider_id; ?>:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 32px -12px rgba(0, 0, 0, 0.12);
     }
-
-    .product-image-modern {
-        background: #f8fafc;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    .product-img-<?php echo $slider_id; ?> {
+        background: #f9fafb;
+        padding: 1.2rem;
+        text-align: center;
+        border-bottom: 1px solid #f0f2f5;
     }
-
-    .product-image-modern img {
-        max-height: 160px;
+    .product-img-<?php echo $slider_id; ?> img {
+        max-height: 150px;
         width: auto;
         object-fit: contain;
         transition: transform 0.4s ease;
     }
-
-    .product-card-modern:hover .product-image-modern img {
-        transform: scale(1.03);
+    .product-card-<?php echo $slider_id; ?>:hover .product-img-<?php echo $slider_id; ?> img {
+        transform: scale(1.02);
     }
-
-    .product-body-modern {
-        padding: 1.25rem 1rem 1.25rem 1rem;
-        flex-grow: 1;
+    .product-info-<?php echo $slider_id; ?> {
+        padding: 1rem 1rem 1.2rem;
+        flex: 1;
         display: flex;
         flex-direction: column;
     }
-
-    .product-brand-modern {
+    .product-brand-<?php echo $slider_id; ?> {
         font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
         color: #3b82f6;
         font-weight: 600;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.3rem;
     }
-
-    .product-title-modern {
-        font-size: 1rem;
+    .product-name-<?php echo $slider_id; ?> {
+        font-size: 0.95rem;
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 0.5rem;
         line-height: 1.4;
+        margin-bottom: 0.5rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-
-    .product-price-modern {
-        font-size: 1.2rem;
+    .product-price-<?php echo $slider_id; ?> {
+        font-size: 1.1rem;
         font-weight: 800;
         color: #0f172a;
         margin-top: auto;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.2px;
     }
-
-    .product-price-modern small {
-        font-size: 0.8rem;
+    .product-price-<?php echo $slider_id; ?> small {
+        font-size: 0.75rem;
         font-weight: 500;
-        color: #64748b;
+        color: #5b6e8c;
     }
-
-    /* ========== CLEAN CAROUSEL CONTROLS ========== */
-    .product-slider.modern-slider .carousel-control-prev,
-    .product-slider.modern-slider .carousel-control-next {
-        width: 44px;
-        height: 44px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(8px);
-        border-radius: 60px;
+    /* ----- Navigation buttons ----- */
+    .slider-btn-<?php echo $slider_id; ?> {
+        position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        opacity: 0;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 60px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 300;
+        color: #1f2937;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+        opacity: 0.7;
     }
-
-    .product-slider.modern-slider:hover .carousel-control-prev,
-    .product-slider.modern-slider:hover .carousel-control-next {
-        opacity: 0.9;
-    }
-
-    .product-slider.modern-slider .carousel-control-prev:hover,
-    .product-slider.modern-slider .carousel-control-next:hover {
-        background: white;
+    .slider-btn-<?php echo $slider_id; ?>:hover {
         opacity: 1;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        background: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-50%) scale(1.02);
     }
-
-    .product-slider.modern-slider .carousel-control-prev-icon,
-    .product-slider.modern-slider .carousel-control-next-icon {
-        filter: invert(0.2);
-        width: 22px;
-        height: 22px;
+    .slider-prev-<?php echo $slider_id; ?> {
+        left: 0;
     }
-
-    /* ========== RESPONSIVE FINE-TUNING ========== */
-    @media (max-width: 767.98px) {
-        .product-slider.modern-slider {
-            padding: 0 8px;
+    .slider-next-<?php echo $slider_id; ?> {
+        right: 0;
+    }
+    /* Dots indicator */
+    .slider-dots-<?php echo $slider_id; ?> {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 28px;
+    }
+    .dot-<?php echo $slider_id; ?> {
+        width: 8px;
+        height: 8px;
+        background: #cbd5e1;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .dot-<?php echo $slider_id; ?>.active {
+        width: 24px;
+        background: #3b82f6;
+    }
+    /* Mobile adjustments */
+    @media (max-width: 640px) {
+        .custom-slider-<?php echo $slider_id; ?> {
+            padding: 0 28px;
         }
-        
-        .product-image-modern img {
-            max-height: 130px;
+        .slider-btn-<?php echo $slider_id; ?> {
+            width: 34px;
+            height: 34px;
+            font-size: 1.4rem;
         }
-        
-        .product-title-modern {
+        .product-img-<?php echo $slider_id; ?> img {
+            max-height: 110px;
+        }
+        .product-name-<?php echo $slider_id; ?> {
             font-size: 0.85rem;
         }
-        
-        .product-price-modern {
-            font-size: 1rem;
-        }
-        
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 36px;
-            height: 36px;
-        }
-    }
-
-    /* Smooth carousel container */
-    .product-slider.modern-slider .carousel-item .row {
-        --bs-gutter-x: 1.2rem;
-        --bs-gutter-y: 0;
-    }
-    
-    .col.mb-4 {
-        margin-bottom: 1.5rem !important;
-    }
-    
-    /* Make cards equal height */
-    .product-slider.modern-slider .carousel-item .row > [class*="col"] {
-        display: flex;
     }
 </style>
 
-<div id="<?php echo htmlspecialchars($slider_id, ENT_QUOTES) ?>" class="carousel slide product-slider modern-slider" data-ride="carousel" data-interval="false" data-wrap="true">
-    <div class="carousel-inner">
-        <?php foreach ($chunked_products as $chunk_index => $chunk): ?>
-            <div class="carousel-item <?php echo $chunk_index === 0 ? 'active' : '' ?>">
-                <div class="row gx-3 gx-lg-4 row-cols-2 row-cols-lg-4">
-                    <?php foreach ($chunk as $row): ?>
-                        <?php
-                            // Product image handling
+<div class="custom-slider-<?php echo $slider_id; ?>" id="slider_<?php echo $slider_id; ?>">
+    <div class="slider-container-<?php echo $slider_id; ?>">
+        <div class="slider-track-<?php echo $slider_id; ?>" id="track_<?php echo $slider_id; ?>">
+            <?php foreach ($chunked_products as $slide_index => $slide_products): ?>
+                <div class="slider-slide-<?php echo $slider_id; ?>">
+                    <div class="product-grid-<?php echo $slider_id; ?>">
+                        <?php foreach ($slide_products as $row): 
+                            // --- Product image handling ---
                             $upload_path = base_app . '/uploads/product_' . $row['id'];
                             $img = "";
                             if (is_dir($upload_path)) {
@@ -205,10 +207,8 @@ $chunked_products = array_chunk($products, 4);
                                     $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
                                 }
                             }
-                            
-                            // Fallback placeholder if no image found
                             if (empty($img)) {
-                                $img = 'https://placehold.co/400x300/f1f5f9/1e293b?text=No+Image';
+                                $img = 'https://placehold.co/400x300/eef2ff/3b82f6?text=No+Image';
                             }
 
                             // Clean data
@@ -216,74 +216,179 @@ $chunked_products = array_chunk($products, 4);
                                 $row[$k] = trim(stripslashes($v));
                             }
 
-                            // Get product price range (fixed distinct query)
+                            // Price range
                             $inventory = $conn->query("SELECT DISTINCT price FROM inventory WHERE product_id = " . $row['id'] . " ORDER BY price ASC");
-                            $inv = array();
+                            $inv = [];
                             while ($ir = $inventory->fetch_assoc()) {
                                 $inv[] = format_num($ir['price']);
                             }
-
-                            $price = '';
+                            $price_html = '';
                             if (isset($inv[0])) {
-                                $price .= $inv[0];
+                                $price_html .= $inv[0];
                             }
                             if (count($inv) > 1) {
-                                $price .= " <small>–</small> " . $inv[count($inv) - 1];
+                                $price_html .= " <small>–</small> " . $inv[count($inv) - 1];
                             }
-                            
-                            // If no price found, show default
-                            if (empty($price)) {
-                                $price = '<small>Price on request</small>';
+                            if (empty($price_html)) {
+                                $price_html = '<small>Call for price</small>';
                             }
                         ?>
-                        <div class="col mb-4 d-flex">
-                            <!-- Modern product card structure (replaces product_card.php include but preserves functionality) -->
-                            <div class="product-card-modern w-100">
-                                <div class="product-image-modern">
-                                    <img src="<?php echo htmlspecialchars($img, ENT_QUOTES) ?>" 
-                                         class="img-fluid" 
-                                         alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES) ?>"
+                            <div class="product-card-<?php echo $slider_id; ?>">
+                                <div class="product-img-<?php echo $slider_id; ?>">
+                                    <img src="<?php echo htmlspecialchars($img, ENT_QUOTES); ?>" 
+                                         alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>"
                                          loading="lazy">
                                 </div>
-                                <div class="product-body-modern">
+                                <div class="product-info-<?php echo $slider_id; ?>">
                                     <?php if (!empty($row['bname'])): ?>
-                                        <div class="product-brand-modern"><?php echo htmlspecialchars($row['bname'], ENT_QUOTES) ?></div>
+                                        <div class="product-brand-<?php echo $slider_id; ?>">
+                                            <?php echo htmlspecialchars($row['bname'], ENT_QUOTES); ?>
+                                        </div>
                                     <?php endif; ?>
-                                    <h5 class="product-title-modern"><?php echo htmlspecialchars($row['name'], ENT_QUOTES) ?></h5>
-                                    <div class="product-price-modern">
-                                        <?php echo $price; ?>
+                                    <div class="product-name-<?php echo $slider_id; ?>">
+                                        <?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>
+                                    </div>
+                                    <div class="product-price-<?php echo $slider_id; ?>">
+                                        <?php echo $price_html; ?>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
 
-    <?php if (count($chunked_products) > 1): ?>
-        <button class="carousel-control-prev" type="button" data-target="#<?php echo htmlspecialchars($slider_id, ENT_QUOTES) ?>" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-target="#<?php echo htmlspecialchars($slider_id, ENT_QUOTES) ?>" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </button>
+    <?php if ($total_slides > 1): ?>
+        <button class="slider-btn-<?php echo $slider_id; ?> slider-prev-<?php echo $slider_id; ?>" aria-label="Previous">‹</button>
+        <button class="slider-btn-<?php echo $slider_id; ?> slider-next-<?php echo $slider_id; ?>" aria-label="Next">›</button>
+        <div class="slider-dots-<?php echo $slider_id; ?>" id="dots_<?php echo $slider_id; ?>"></div>
     <?php endif; ?>
 </div>
 
 <script>
-// Ensures smooth carousel behavior and active state consistency (optional micro fix)
-(function() {
-    var carouselElement = document.getElementById('<?php echo htmlspecialchars($slider_id, ENT_QUOTES) ?>');
-    if (carouselElement && typeof $ !== 'undefined') {
-        // Reinitialize carousel to guarantee smooth transition if needed
-        $(carouselElement).carousel({
-            interval: false,
-            wrap: true
+    (function() {
+        const sliderId = '<?php echo $slider_id; ?>';
+        const track = document.getElementById('track_' + sliderId);
+        const slides = document.querySelectorAll('.slider-slide-' + sliderId);
+        const prevBtn = document.querySelector('.slider-prev-' + sliderId);
+        const nextBtn = document.querySelector('.slider-next-' + sliderId);
+        const dotsContainer = document.getElementById('dots_' + sliderId);
+        
+        if (!track || slides.length === 0) return;
+        
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+        let startX = 0;
+        let isSwiping = false;
+        let swipeThreshold = 50;
+        
+        // Create dots
+        if (dotsContainer && totalSlides > 1) {
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot-' + sliderId);
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        function updateDots() {
+            if (!dotsContainer) return;
+            const dots = document.querySelectorAll('.dot-' + sliderId);
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+        
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            if (index === currentIndex) return;
+            currentIndex = index;
+            const translateX = - (currentIndex * 100);
+            track.style.transform = `translateX(${translateX}%)`;
+            updateDots();
+        }
+        
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) {
+                goToSlide(currentIndex + 1);
+            } else if (currentIndex === totalSlides - 1) {
+                // Optional: loop back to first – uncomment if desired
+                // goToSlide(0);
+            }
+        }
+        
+        function prevSlide() {
+            if (currentIndex > 0) {
+                goToSlide(currentIndex - 1);
+            } else if (currentIndex === 0) {
+                // Optional: loop to last
+                // goToSlide(totalSlides - 1);
+            }
+        }
+        
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+        
+        // --- Touch swipe for mobile ---
+        const sliderContainer = document.querySelector('.slider-container-' + sliderId);
+        if (sliderContainer) {
+            sliderContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isSwiping = true;
+            }, {passive: true});
+            
+            sliderContainer.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
+                const diffX = e.touches[0].clientX - startX;
+                // optional: prevent page scroll while swiping horizontally
+                if (Math.abs(diffX) > 10) e.preventDefault();
+            }, {passive: false});
+            
+            sliderContainer.addEventListener('touchend', (e) => {
+                if (!isSwiping) return;
+                const endX = e.changedTouches[0].clientX;
+                const diffX = endX - startX;
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) {
+                        prevSlide();
+                    } else {
+                        nextSlide();
+                    }
+                }
+                isSwiping = false;
+                startX = 0;
+            });
+        }
+        
+        // Optional: keyboard navigation (arrow keys)
+        window.addEventListener('keydown', (e) => {
+            const sliderElement = document.getElementById('slider_' + sliderId);
+            if (!sliderElement || !sliderElement.contains(document.activeElement)) return;
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+                e.preventDefault();
+            }
         });
-    }
-})();
+        
+        // Ensure slider is responsive after window resize (no action needed, % based)
+        // But re-check track transform to avoid glitches
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // re-apply same translation to avoid misalignment
+                const translateX = - (currentIndex * 100);
+                track.style.transform = `translateX(${translateX}%)`;
+            }, 100);
+        });
+    })();
 </script>
