@@ -105,9 +105,17 @@ $chunked_products = array_chunk($products, 4);
 
             <div class="product-slide">
 
-                <?php include base_app . '/inc/product_card.php';
-                ?>
-            </div>
+            <div class="product-slide">
+
+    <?php include base_app.'/inc/product_card.php'; ?>
+
+    <?php if(!empty($product_price)): ?>
+    <div class="slider-price">
+        $<?php echo $product_price; ?>
+    </div>
+    <?php endif; ?>
+
+</div>
 
         <?php endforeach; ?>
 
