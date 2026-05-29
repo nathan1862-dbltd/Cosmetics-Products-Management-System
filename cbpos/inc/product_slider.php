@@ -56,7 +56,39 @@ $chunked_products = array_chunk($products, 4);
         <?php foreach($products as $row): ?>
 
             <div class="product-slide">
-                <?php
+            <?php
+
+            $upload_path = base_app . '/uploads/product_' . $row['id'];
+
+            $img = '';
+
+            if(is_dir($upload_path)){
+
+                $fileO = scandir($upload_path);
+
+                if(isset($fileO[2])){
+
+                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
+
+                }
+
+            }
+
+            $inventory = $conn->query("SELECT DISTINCT(price) FROM inventory WHERE product_id=".$row['id']." ORDER BY price ASC");
+
+            $inv = [];
+
+            while($ir = $inventory->fetch_assoc()){
+
+                $inv[] = format_num($ir['price']);
+
+            }
+
+            $price = '';
+
+            if(isset($inv[0])) $price = $inv[0];
+
+            if(count($inv) > 1) $price .= ' ~ '.end($inv);
                 $product_id = $row['id'];
                 $product_name = $row['name'];
                 $product_brand = $row['bname'];
