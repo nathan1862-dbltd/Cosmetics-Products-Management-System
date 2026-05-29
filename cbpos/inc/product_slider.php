@@ -90,11 +90,22 @@ $chunked_products = array_chunk($products, 4);
 
             if(count($inv) > 1) $price .= ' ~ '.end($inv);
                 $product_id = $row['id'];
-                $product_name = $row['name'];
-                $product_brand = $row['bname'];
-                $product_category = $row['category'];
 
-                include base_app . '/inc/product_card.php';
+            $product_name = $row['name'];
+
+            $product_brand = $row['bname'];
+
+            $product_category = $row['category'];
+
+            $product_price = $price;
+
+            $product_image = $img;
+
+            ?>
+
+            <div class="product-slide">
+
+                <?php include base_app . '/inc/product_card.php';
                 ?>
             </div>
 
