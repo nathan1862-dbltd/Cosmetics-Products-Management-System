@@ -54,6 +54,7 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
     </div>
     </div>
 </section>
+<?php include base_app . '/inc/new_arrival_slider.php'; ?>
 <script>
     function _filter(){
         var brands = []
