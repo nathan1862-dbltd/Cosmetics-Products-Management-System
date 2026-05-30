@@ -1,6 +1,6 @@
 <?php
 /**
- * Reusable product slider wrapper – No Bootstrap, vanilla JS.
+ * Sephora‑style product slider – smooth horizontal scrolling, snap alignment.
  * Expected variables:
  * - $products : array of product rows with id,name,bname,category
  * - $slider_id : unique id string for carousel
@@ -9,386 +9,301 @@
 if (!isset($products) || !is_array($products) || empty($products)) {
     return;
 }
-
-$chunked_products = array_chunk($products, 4);
-$total_slides = count($chunked_products);
 ?>
 
 <style>
-    /* ----- Modern slider core ----- */
-    .custom-slider-<?php echo $slider_id; ?> {
+    /* ----- Slider container (Sephora style) ----- */
+    .sephora-slider-<?php echo $slider_id; ?> {
         position: relative;
         width: 100%;
-        overflow: hidden;
-        padding: 0 40px; /* Space for prev/next buttons */
+        padding: 0 40px;
         box-sizing: border-box;
     }
-    .slider-container-<?php echo $slider_id; ?> {
-        overflow: hidden;
-        border-radius: 24px;
-    }
-    .slider-track-<?php echo $slider_id; ?> {
+
+    /* Scrollable track – horizontal, smooth snap */
+    .sephora-track-<?php echo $slider_id; ?> {
         display: flex;
-        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        will-change: transform;
-    }
-    .slider-slide-<?php echo $slider_id; ?> {
-        flex: 0 0 100%;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 4px;
-    }
-    /* ----- Responsive product grid (2 cols mobile, 4 cols desktop) ----- */
-    .product-grid-<?php echo $slider_id; ?> {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        flex-flow: row nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
         gap: 1.2rem;
+        padding: 0.5rem 0 1.5rem;
+        /* Hide scrollbar but keep functionality */
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
     }
+    .sephora-track-<?php echo $slider_id; ?>::-webkit-scrollbar {
+        height: 6px;
+    }
+    .sephora-track-<?php echo $slider_id; ?>::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    .sephora-track-<?php echo $slider_id; ?>::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    /* Each product card takes correct width: 2 cols mobile, 4 cols desktop */
+    .sephora-card-<?php echo $slider_id; ?> {
+        flex: 0 0 calc(50% - 0.6rem);  /* 2 cards per view on mobile (gap accounted) */
+        scroll-snap-align: start;
+        transition: transform 0.2s ease, box-shadow 0.2s;
+    }
+
     @media (min-width: 768px) {
-        .product-grid-<?php echo $slider_id; ?> {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
+        .sephora-card-<?php echo $slider_id; ?> {
+            flex: 0 0 calc(25% - 0.9rem); /* 4 cards per view on desktop */
         }
     }
-    /* ----- Modern product card ----- */
-    .product-card-<?php echo $slider_id; ?> {
+
+    /* ----- Modern product card (Sephora inspired) ----- */
+    .product-card-sephora-<?php echo $slider_id; ?> {
         background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.02);
-        transition: all 0.3s ease;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.25s ease;
         overflow: hidden;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        height: 100%;
-        backdrop-filter: blur(0px);
+        cursor: pointer;
     }
-    .product-card-<?php echo $slider_id; ?>:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 32px -12px rgba(0, 0, 0, 0.12);
+    .product-card-sephora-<?php echo $slider_id; ?>:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.12);
     }
-    .product-img-<?php echo $slider_id; ?> {
-        background: #f9fafb;
-        padding: 1.2rem;
+    .card-img-sephora-<?php echo $slider_id; ?> {
+        background: #faf9f8;
+        padding: 1rem;
         text-align: center;
-        border-bottom: 1px solid #f0f2f5;
+        border-bottom: 1px solid #f0efed;
     }
-    .product-img-<?php echo $slider_id; ?> img {
+    .card-img-sephora-<?php echo $slider_id; ?> img {
         max-height: 150px;
         width: auto;
         object-fit: contain;
-        transition: transform 0.4s ease;
+        transition: transform 0.3s ease;
     }
-    .product-card-<?php echo $slider_id; ?>:hover .product-img-<?php echo $slider_id; ?> img {
+    .product-card-sephora-<?php echo $slider_id; ?>:hover .card-img-sephora-<?php echo $slider_id; ?> img {
         transform: scale(1.02);
     }
-    .product-info-<?php echo $slider_id; ?> {
-        padding: 1rem 1rem 1.2rem;
+    .card-info-sephora-<?php echo $slider_id; ?> {
+        padding: 0.8rem 0.8rem 1rem;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
-    .product-brand-<?php echo $slider_id; ?> {
+    .brand-sephora-<?php echo $slider_id; ?> {
         font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #3b82f6;
         font-weight: 600;
-        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+        color: #7c3aed;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
     }
-    .product-name-<?php echo $slider_id; ?> {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #1e293b;
-        line-height: 1.4;
-        margin-bottom: 0.5rem;
+    .product-title-sephora-<?php echo $slider_id; ?> {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1e1a2f;
+        line-height: 1.35;
+        margin-bottom: 0.4rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    .product-price-<?php echo $slider_id; ?> {
-        font-size: 1.1rem;
-        font-weight: 800;
+    .price-sephora-<?php echo $slider_id; ?> {
+        font-size: 1rem;
+        font-weight: 700;
         color: #0f172a;
         margin-top: auto;
-        letter-spacing: -0.2px;
     }
-    .product-price-<?php echo $slider_id; ?> small {
-        font-size: 0.75rem;
+    .price-sephora-<?php echo $slider_id; ?> small {
+        font-size: 0.7rem;
         font-weight: 500;
         color: #5b6e8c;
     }
-    /* ----- Navigation buttons ----- */
-    .slider-btn-<?php echo $slider_id; ?> {
+
+    /* ----- Navigation arrows (Sephora style: circle, subtle) ----- */
+    .slider-arrow-<?php echo $slider_id; ?> {
         position: absolute;
-        top: 50%;
+        top: 45%;
         transform: translateY(-50%);
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(6px);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 60px;
-        cursor: pointer;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
         font-size: 1.8rem;
         font-weight: 300;
-        color: #1f2937;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        z-index: 10;
-        opacity: 0.7;
+        color: #2d2a2e;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.2s;
+        z-index: 5;
+        border: 1px solid rgba(0, 0, 0, 0.03);
     }
-    .slider-btn-<?php echo $slider_id; ?>:hover {
-        opacity: 1;
+    .slider-arrow-<?php echo $slider_id; ?>:hover {
         background: white;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
         transform: translateY(-50%) scale(1.02);
     }
-    .slider-prev-<?php echo $slider_id; ?> {
+    .arrow-prev-<?php echo $slider_id; ?> {
         left: 0;
     }
-    .slider-next-<?php echo $slider_id; ?> {
+    .arrow-next-<?php echo $slider_id; ?> {
         right: 0;
     }
-    /* Dots indicator */
-    .slider-dots-<?php echo $slider_id; ?> {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 28px;
-    }
-    .dot-<?php echo $slider_id; ?> {
-        width: 8px;
-        height: 8px;
-        background: #cbd5e1;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .dot-<?php echo $slider_id; ?>.active {
-        width: 24px;
-        background: #3b82f6;
-    }
-    /* Mobile adjustments */
+
     @media (max-width: 640px) {
-        .custom-slider-<?php echo $slider_id; ?> {
+        .sephora-slider-<?php echo $slider_id; ?> {
             padding: 0 28px;
         }
-        .slider-btn-<?php echo $slider_id; ?> {
-            width: 34px;
-            height: 34px;
+        .slider-arrow-<?php echo $slider_id; ?> {
+            width: 32px;
+            height: 32px;
             font-size: 1.4rem;
         }
-        .product-img-<?php echo $slider_id; ?> img {
+        .card-img-sephora-<?php echo $slider_id; ?> img {
             max-height: 110px;
         }
-        .product-name-<?php echo $slider_id; ?> {
-            font-size: 0.85rem;
+        .product-title-sephora-<?php echo $slider_id; ?> {
+            font-size: 0.8rem;
         }
     }
 </style>
 
-<div class="custom-slider-<?php echo $slider_id; ?>" id="slider_<?php echo $slider_id; ?>">
-    <div class="slider-container-<?php echo $slider_id; ?>">
-        <div class="slider-track-<?php echo $slider_id; ?>" id="track_<?php echo $slider_id; ?>">
-            <?php foreach ($chunked_products as $slide_index => $slide_products): ?>
-                <div class="slider-slide-<?php echo $slider_id; ?>">
-                    <div class="product-grid-<?php echo $slider_id; ?>">
-                        <?php foreach ($slide_products as $row): 
-                            // --- Product image handling ---
-                            $upload_path = base_app . '/uploads/product_' . $row['id'];
-                            $img = "";
-                            if (is_dir($upload_path)) {
-                                $fileO = scandir($upload_path);
-                                if (isset($fileO[2])) {
-                                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
-                                }
-                            }
-                            if (empty($img)) {
-                                $img = 'https://placehold.co/400x300/eef2ff/3b82f6?text=No+Image';
-                            }
+<div class="sephora-slider-<?php echo $slider_id; ?>">
+    <div class="sephora-track-<?php echo $slider_id; ?>" id="sephoraTrack_<?php echo $slider_id; ?>">
+        <?php foreach ($products as $row): 
+            // ----- Product image handling -----
+            $upload_path = base_app . '/uploads/product_' . $row['id'];
+            $img = "";
+            if (is_dir($upload_path)) {
+                $fileO = scandir($upload_path);
+                if (isset($fileO[2])) {
+                    $img = 'uploads/product_' . $row['id'] . '/' . $fileO[2];
+                }
+            }
+            if (empty($img)) {
+                $img = 'https://placehold.co/400x300/f8fafc/1e293b?text=No+Image';
+            }
 
-                            // Clean data
-                            foreach ($row as $k => $v) {
-                                $row[$k] = trim(stripslashes($v));
-                            }
+            // Clean data
+            foreach ($row as $k => $v) {
+                $row[$k] = trim(stripslashes($v));
+            }
 
-                            // Price range
-                            $inventory = $conn->query("SELECT DISTINCT price FROM inventory WHERE product_id = " . $row['id'] . " ORDER BY price ASC");
-                            $inv = [];
-                            while ($ir = $inventory->fetch_assoc()) {
-                                $inv[] = format_num($ir['price']);
-                            }
-                            $price_html = '';
-                            if (isset($inv[0])) {
-                                $price_html .= $inv[0];
-                            }
-                            if (count($inv) > 1) {
-                                $price_html .= " <small>–</small> " . $inv[count($inv) - 1];
-                            }
-                            if (empty($price_html)) {
-                                $price_html = '<small>Call for price</small>';
-                            }
-                        ?>
-                            <div class="product-card-<?php echo $slider_id; ?>">
-                                <div class="product-img-<?php echo $slider_id; ?>">
-                                    <img src="<?php echo htmlspecialchars($img, ENT_QUOTES); ?>" 
-                                         alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>"
-                                         loading="lazy">
-                                </div>
-                                <div class="product-info-<?php echo $slider_id; ?>">
-                                    <?php if (!empty($row['bname'])): ?>
-                                        <div class="product-brand-<?php echo $slider_id; ?>">
-                                            <?php echo htmlspecialchars($row['bname'], ENT_QUOTES); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <div class="product-name-<?php echo $slider_id; ?>">
-                                        <?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>
-                                    </div>
-                                    <div class="product-price-<?php echo $slider_id; ?>">
-                                        <?php echo $price_html; ?>
-                                    </div>
-                                </div>
+            // Price range from inventory
+            $inventory = $conn->query("SELECT DISTINCT price FROM inventory WHERE product_id = " . $row['id'] . " ORDER BY price ASC");
+            $inv = [];
+            while ($ir = $inventory->fetch_assoc()) {
+                $inv[] = format_num($ir['price']);
+            }
+            $price_html = '';
+            if (isset($inv[0])) {
+                $price_html .= $inv[0];
+            }
+            if (count($inv) > 1) {
+                $price_html .= " <small>–</small> " . $inv[count($inv) - 1];
+            }
+            if (empty($price_html)) {
+                $price_html = '<small>Price on request</small>';
+            }
+        ?>
+            <div class="sephora-card-<?php echo $slider_id; ?>">
+                <div class="product-card-sephora-<?php echo $slider_id; ?>">
+                    <div class="card-img-sephora-<?php echo $slider_id; ?>">
+                        <img src="<?php echo htmlspecialchars($img, ENT_QUOTES); ?>" 
+                             alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>"
+                             loading="lazy">
+                    </div>
+                    <div class="card-info-sephora-<?php echo $slider_id; ?>">
+                        <?php if (!empty($row['bname'])): ?>
+                            <div class="brand-sephora-<?php echo $slider_id; ?>">
+                                <?php echo htmlspecialchars($row['bname'], ENT_QUOTES); ?>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
+                        <div class="product-title-sephora-<?php echo $slider_id; ?>">
+                            <?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>
+                        </div>
+                        <div class="price-sephora-<?php echo $slider_id; ?>">
+                            <?php echo $price_html; ?>
+                        </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
+            </div>
+        <?php endforeach; ?>
     </div>
 
-    <?php if ($total_slides > 1): ?>
-        <button class="slider-btn-<?php echo $slider_id; ?> slider-prev-<?php echo $slider_id; ?>" aria-label="Previous">‹</button>
-        <button class="slider-btn-<?php echo $slider_id; ?> slider-next-<?php echo $slider_id; ?>" aria-label="Next">›</button>
-        <div class="slider-dots-<?php echo $slider_id; ?>" id="dots_<?php echo $slider_id; ?>"></div>
-    <?php endif; ?>
+    <!-- Navigation arrows -->
+    <div class="slider-arrow-<?php echo $slider_id; ?> arrow-prev-<?php echo $slider_id; ?>">‹</div>
+    <div class="slider-arrow-<?php echo $slider_id; ?> arrow-next-<?php echo $slider_id; ?>">›</div>
 </div>
 
 <script>
     (function() {
         const sliderId = '<?php echo $slider_id; ?>';
-        const track = document.getElementById('track_' + sliderId);
-        const slides = document.querySelectorAll('.slider-slide-' + sliderId);
-        const prevBtn = document.querySelector('.slider-prev-' + sliderId);
-        const nextBtn = document.querySelector('.slider-next-' + sliderId);
-        const dotsContainer = document.getElementById('dots_' + sliderId);
+        const track = document.getElementById('sephoraTrack_' + sliderId);
+        if (!track) return;
+
+        const prevBtn = document.querySelector('.arrow-prev-' + sliderId);
+        const nextBtn = document.querySelector('.arrow-next-' + sliderId);
         
-        if (!track || slides.length === 0) return;
-        
-        let currentIndex = 0;
-        const totalSlides = slides.length;
-        let startX = 0;
-        let isSwiping = false;
-        let swipeThreshold = 50;
-        
-        // Create dots
-        if (dotsContainer && totalSlides > 1) {
-            for (let i = 0; i < totalSlides; i++) {
-                const dot = document.createElement('div');
-                dot.classList.add('dot-' + sliderId);
-                if (i === 0) dot.classList.add('active');
-                dot.addEventListener('click', () => goToSlide(i));
-                dotsContainer.appendChild(dot);
-            }
+        // Calculate scroll distance = width of one card + gap
+        function getCardScrollWidth() {
+            const cards = track.querySelectorAll('.sephora-card-' + sliderId);
+            if (!cards.length) return 0;
+            const firstCard = cards[0];
+            const style = window.getComputedStyle(firstCard);
+            const flexBasis = parseFloat(style.flexBasis);
+            const gap = parseFloat(window.getComputedStyle(track).gap);
+            return (flexBasis + gap);
         }
         
-        function updateDots() {
-            if (!dotsContainer) return;
-            const dots = document.querySelectorAll('.dot-' + sliderId);
-            dots.forEach((dot, idx) => {
-                if (idx === currentIndex) dot.classList.add('active');
-                else dot.classList.remove('active');
-            });
+        function scrollPrev() {
+            const scrollAmount = getCardScrollWidth();
+            track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         }
         
-        function goToSlide(index) {
-            if (index < 0) index = 0;
-            if (index >= totalSlides) index = totalSlides - 1;
-            if (index === currentIndex) return;
-            currentIndex = index;
-            const translateX = - (currentIndex * 100);
-            track.style.transform = `translateX(${translateX}%)`;
-            updateDots();
+        function scrollNext() {
+            const scrollAmount = getCardScrollWidth();
+            track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
         
-        function nextSlide() {
-            if (currentIndex < totalSlides - 1) {
-                goToSlide(currentIndex + 1);
-            } else if (currentIndex === totalSlides - 1) {
-                // Optional: loop back to first – uncomment if desired
-                // goToSlide(0);
-            }
+        if (prevBtn) prevBtn.addEventListener('click', scrollPrev);
+        if (nextBtn) nextBtn.addEventListener('click', scrollNext);
+        
+        // Optional: handle arrow visibility on scroll edges (Sephora hides arrows at ends)
+        function updateArrowsVisibility() {
+            if (!prevBtn || !nextBtn) return;
+            const scrollLeft = track.scrollLeft;
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            prevBtn.style.opacity = scrollLeft <= 5 ? '0.3' : '1';
+            nextBtn.style.opacity = maxScroll - scrollLeft <= 5 ? '0.3' : '1';
         }
         
-        function prevSlide() {
-            if (currentIndex > 0) {
-                goToSlide(currentIndex - 1);
-            } else if (currentIndex === 0) {
-                // Optional: loop to last
-                // goToSlide(totalSlides - 1);
-            }
-        }
-        
-        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-        
-        // --- Touch swipe for mobile ---
-        const sliderContainer = document.querySelector('.slider-container-' + sliderId);
-        if (sliderContainer) {
-            sliderContainer.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                isSwiping = true;
-            }, {passive: true});
-            
-            sliderContainer.addEventListener('touchmove', (e) => {
-                if (!isSwiping) return;
-                const diffX = e.touches[0].clientX - startX;
-                // optional: prevent page scroll while swiping horizontally
-                if (Math.abs(diffX) > 10) e.preventDefault();
-            }, {passive: false});
-            
-            sliderContainer.addEventListener('touchend', (e) => {
-                if (!isSwiping) return;
-                const endX = e.changedTouches[0].clientX;
-                const diffX = endX - startX;
-                if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0) {
-                        prevSlide();
-                    } else {
-                        nextSlide();
-                    }
-                }
-                isSwiping = false;
-                startX = 0;
-            });
-        }
-        
-        // Optional: keyboard navigation (arrow keys)
-        window.addEventListener('keydown', (e) => {
-            const sliderElement = document.getElementById('slider_' + sliderId);
-            if (!sliderElement || !sliderElement.contains(document.activeElement)) return;
-            if (e.key === 'ArrowLeft') {
-                prevSlide();
-                e.preventDefault();
-            } else if (e.key === 'ArrowRight') {
-                nextSlide();
-                e.preventDefault();
-            }
+        track.addEventListener('scroll', updateArrowsVisibility);
+        window.addEventListener('resize', () => {
+            updateArrowsVisibility();
+            // Recalculate after resize to avoid misalignment (just visual)
         });
+        setTimeout(updateArrowsVisibility, 100); // initial check
         
-        // Ensure slider is responsive after window resize (no action needed, % based)
-        // But re-check track transform to avoid glitches
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                // re-apply same translation to avoid misalignment
-                const translateX = - (currentIndex * 100);
-                track.style.transform = `translateX(${translateX}%)`;
-            }, 100);
+        // Touch swipe on track for mobile (optional – native scroll already works)
+        let startX = 0;
+        track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive: true});
+        track.addEventListener('touchend', (e) => {
+            const diff = e.changedTouches[0].clientX - startX;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) scrollPrev();
+                else scrollNext();
+            }
         });
     })();
 </script>
