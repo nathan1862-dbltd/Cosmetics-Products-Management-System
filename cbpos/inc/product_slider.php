@@ -1,6 +1,6 @@
 <?php
 /**
- * Sephora‑style product slider – smaller padding, smooth scroll snap.
+ * Sephora‑style product slider – clickable cards, smaller padding, smooth scroll.
  * Expected variables:
  * - $products : array of product rows with id,name,bname,category
  * - $slider_id : unique id string for carousel
@@ -16,24 +16,24 @@ if (!isset($products) || !is_array($products) || empty($products)) {
     .sephora-slider-<?php echo $slider_id; ?> {
         position: relative;
         width: 100%;
-        padding: 0 16px;  /* smaller side padding (was 40px) */
+        padding: 0 16px;
         box-sizing: border-box;
     }
 
-    /* Scrollable track – horizontal, smooth snap, smaller vertical padding */
+    /* Scrollable track */
     .sephora-track-<?php echo $slider_id; ?> {
         display: flex;
         flex-flow: row nowrap;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scroll-behavior: smooth;
-        gap: 1rem;          /* reduced gap between cards */
-        padding: 0.25rem 0 1rem; /* smaller top/bottom padding */
+        gap: 1rem;
+        padding: 0.25rem 0 1rem;
         scrollbar-width: thin;
         -webkit-overflow-scrolling: touch;
     }
     .sephora-track-<?php echo $slider_id; ?>::-webkit-scrollbar {
-        height: 4px;        /* thinner scrollbar */
+        height: 4px;
     }
     .sephora-track-<?php echo $slider_id; ?>::-webkit-scrollbar-track {
         background: #f1f1f1;
@@ -44,23 +44,29 @@ if (!isset($products) || !is_array($products) || empty($products)) {
         border-radius: 10px;
     }
 
-    /* Each product card – snap alignment, responsive width */
+    /* Card container – responsive width */
     .sephora-card-<?php echo $slider_id; ?> {
-        flex: 0 0 calc(50% - 0.5rem);  /* 2 cards per view on mobile (gap accounted) */
+        flex: 0 0 calc(50% - 0.5rem);
         scroll-snap-align: start;
-        transition: transform 0.2s ease, box-shadow 0.2s;
     }
-
     @media (min-width: 768px) {
         .sephora-card-<?php echo $slider_id; ?> {
-            flex: 0 0 calc(25% - 0.75rem); /* 4 cards per view on desktop */
+            flex: 0 0 calc(25% - 0.75rem);
         }
     }
 
-    /* ----- Modern product card (compact, Sephora inspired) ----- */
+    /* Product card link – removes underline, inherits color */
+    .product-link-<?php echo $slider_id; ?> {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    /* Modern product card */
     .product-card-sephora-<?php echo $slider_id; ?> {
         background: #ffffff;
-        border-radius: 14px;      /* slightly smaller radius */
+        border-radius: 14px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
         transition: all 0.25s ease;
         overflow: hidden;
@@ -75,12 +81,12 @@ if (!isset($products) || !is_array($products) || empty($products)) {
     }
     .card-img-sephora-<?php echo $slider_id; ?> {
         background: #faf9f8;
-        padding: 0.75rem;         /* reduced image padding */
+        padding: 0.75rem;
         text-align: center;
         border-bottom: 1px solid #f0efed;
     }
     .card-img-sephora-<?php echo $slider_id; ?> img {
-        max-height: 130px;        /* slightly smaller on desktop */
+        max-height: 130px;
         width: auto;
         object-fit: contain;
         transition: transform 0.3s ease;
@@ -89,7 +95,7 @@ if (!isset($products) || !is_array($products) || empty($products)) {
         transform: scale(1.02);
     }
     .card-info-sephora-<?php echo $slider_id; ?> {
-        padding: 0.6rem 0.7rem 0.8rem;  /* reduced inner padding */
+        padding: 0.6rem 0.7rem 0.8rem;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -125,7 +131,7 @@ if (!isset($products) || !is_array($products) || empty($products)) {
         color: #5b6e8c;
     }
 
-    /* ----- Navigation arrows (smaller, more compact) ----- */
+    /* Navigation arrows */
     .slider-arrow-<?php echo $slider_id; ?> {
         position: absolute;
         top: 45%;
@@ -159,10 +165,10 @@ if (!isset($products) || !is_array($products) || empty($products)) {
         right: 0;
     }
 
-    /* Mobile adjustments – even tighter */
+    /* Mobile adjustments */
     @media (max-width: 640px) {
         .sephora-slider-<?php echo $slider_id; ?> {
-            padding: 0 8px;   /* minimal side padding on mobile */
+            padding: 0 8px;
         }
         .slider-arrow-<?php echo $slider_id; ?> {
             width: 28px;
@@ -221,28 +227,36 @@ if (!isset($products) || !is_array($products) || empty($products)) {
             if (empty($price_html)) {
                 $price_html = '<small>Price on request</small>';
             }
+
+            // Build product page URL – modify this to match your routing
+            $product_url = "product.php?id=" . $row['id'];  // <-- CHANGE THIS LINE if needed
+            // Example alternatives:
+            // $product_url = "index.php?page=view_product&id=" . $row['id'];
+            // $product_url = "/shop/product/" . $row['id'];
         ?>
             <div class="sephora-card-<?php echo $slider_id; ?>">
-                <div class="product-card-sephora-<?php echo $slider_id; ?>">
-                    <div class="card-img-sephora-<?php echo $slider_id; ?>">
-                        <img src="<?php echo htmlspecialchars($img, ENT_QUOTES); ?>" 
-                             alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>"
-                             loading="lazy">
-                    </div>
-                    <div class="card-info-sephora-<?php echo $slider_id; ?>">
-                        <?php if (!empty($row['bname'])): ?>
-                            <div class="brand-sephora-<?php echo $slider_id; ?>">
-                                <?php echo htmlspecialchars($row['bname'], ENT_QUOTES); ?>
+                <a href="<?php echo htmlspecialchars($product_url, ENT_QUOTES); ?>" class="product-link-<?php echo $slider_id; ?>">
+                    <div class="product-card-sephora-<?php echo $slider_id; ?>">
+                        <div class="card-img-sephora-<?php echo $slider_id; ?>">
+                            <img src="<?php echo htmlspecialchars($img, ENT_QUOTES); ?>" 
+                                 alt="<?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>"
+                                 loading="lazy">
+                        </div>
+                        <div class="card-info-sephora-<?php echo $slider_id; ?>">
+                            <?php if (!empty($row['bname'])): ?>
+                                <div class="brand-sephora-<?php echo $slider_id; ?>">
+                                    <?php echo htmlspecialchars($row['bname'], ENT_QUOTES); ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="product-title-sephora-<?php echo $slider_id; ?>">
+                                <?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>
                             </div>
-                        <?php endif; ?>
-                        <div class="product-title-sephora-<?php echo $slider_id; ?>">
-                            <?php echo htmlspecialchars($row['name'], ENT_QUOTES); ?>
-                        </div>
-                        <div class="price-sephora-<?php echo $slider_id; ?>">
-                            <?php echo $price_html; ?>
+                            <div class="price-sephora-<?php echo $slider_id; ?>">
+                                <?php echo $price_html; ?>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         <?php endforeach; ?>
     </div>
@@ -293,12 +307,9 @@ if (!isset($products) || !is_array($products) || empty($products)) {
         }
         
         track.addEventListener('scroll', updateArrowsVisibility);
-        window.addEventListener('resize', () => {
-            updateArrowsVisibility();
-        });
+        window.addEventListener('resize', updateArrowsVisibility);
         setTimeout(updateArrowsVisibility, 100);
         
-        // Optional touch swipe
         let startX = 0;
         track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive: true});
         track.addEventListener('touchend', (e) => {
