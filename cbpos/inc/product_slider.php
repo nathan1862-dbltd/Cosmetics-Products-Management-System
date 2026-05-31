@@ -1,6 +1,6 @@
 <?php
 /**
- * Sephora‑style product slider – clickable cards, smaller padding, smooth scroll.
+ * Sephora‑style product slider – clickable cards (MD5 product ID), smaller padding.
  * Expected variables:
  * - $products : array of product rows with id,name,bname,category
  * - $slider_id : unique id string for carousel
@@ -228,11 +228,9 @@ if (!isset($products) || !is_array($products) || empty($products)) {
                 $price_html = '<small>Price on request</small>';
             }
 
-            // Build product page URL – modify this to match your routing
-            $product_url = "product.php?id=" . $row['id'];  // <-- CHANGE THIS LINE if needed
-            // Example alternatives:
-            // $product_url = "index.php?page=view_product&id=" . $row['id'];
-            // $product_url = "/shop/product/" . $row['id'];
+            // Build product URL with MD5 of product ID
+            $product_hash = md5($row['id']);
+            $product_url = "./?p=view_product&id=" . $product_hash;
         ?>
             <div class="sephora-card-<?php echo $slider_id; ?>">
                 <a href="<?php echo htmlspecialchars($product_url, ENT_QUOTES); ?>" class="product-link-<?php echo $slider_id; ?>">
