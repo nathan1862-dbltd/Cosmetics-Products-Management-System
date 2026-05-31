@@ -9,6 +9,7 @@ require_once('classes/DBConnection.php');
 require_once('classes/SystemSettings.php');
 $db = new DBConnection;
 $conn = $db->conn;
+$currency_symbol = 'Ks';
 
 
 function redirect($url=''){
@@ -36,7 +37,7 @@ function format_num($number = '', $decimal = ''){
         $ex = explode(".", $number);
         $decLen = isset($ex[1]) ? strlen($ex[1]) : 0;
         $formatted_number = is_numeric($decimal) ? number_format($number, $decimal) : number_format($number, $decLen);
-        return 'Ks ' . $formatted_number;
+        return $currency_symbol . ' ' . $formatted_number;
     } else {
         return "Invalid Input";
     }
