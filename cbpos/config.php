@@ -36,7 +36,7 @@ function format_num($number = '', $decimal = ''){
         $ex = explode(".", $number);
         $decLen = isset($ex[1]) ? strlen($ex[1]) : 0;
         $formatted_number = is_numeric($decimal) ? number_format($number, $decimal) : number_format($number, $decLen);
-        return $currency_symbol . ' ' . $formatted_number;
+        return 'Ks ' . $formatted_number;
     } else {
         return "Invalid Input";
     }
