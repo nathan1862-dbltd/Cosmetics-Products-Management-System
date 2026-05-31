@@ -56,12 +56,7 @@
                 <h1 class="display-5 fw-bolder border-bottom border-primary pb-1"><?php echo $name ?></h1>
                 <p class="m-0"><small>Brand: <?php echo $bname ?></small></p>
                 <div class="fs-5 mb-5">
-                
-    <span id="price">
-
-        <?= format_num($ir['price']) ?>
-
-    </span>
+                &#8369; <span id="price"><?php echo isset($inv[0]['price']) ?  format_num($inv[0]['price']) : "--" ?></span>
                 <br>
                 <span><small><span class="text-muted">Available Stock:</span> <span id="avail"><?php echo isset($inv[0]['stock']) ? format_num($inv[0]['stock']) : "--" ?></span></small></span>
                 <h5>Variant</h5>
@@ -96,16 +91,55 @@
 <section class="py-5 bg-light">
     <div class="container px-4 px-lg-5 mt-5">
         <h2 class="fw-bolder mb-4">Related products</h2>
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
         <?php 
-            $related_products = array();
-            $products = $conn->query("SELECT p.*,b.name as bname,c.category  FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 and (p.category_id = '{$category_id}' or p.brand_id = '{$brand_id}') and p.id !='{$id}' order by rand() limit 12");
-            while($row = $products->fetch_assoc()){
-                $related_products[] = $row;
-            }
-            $slider_id = "related-products-slider";
-            $products = $related_products;
-            include base_app . '/inc/product_slider.php';
+            $products = $conn->query("SELECT p.*,b.name as bname,c.category  FROM `products` p inner join brands b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.status = 1 and (p.category_id = '{$category_id}' or p.brand_id = '{$brand_id}') and p.id !='{$id}' order by rand() limit 4 ");
+            while($row = $products->fetch_assoc()):
+                $upload_path = base_app.'/uploads/product_'.$row['id'];
+                $img = "";
+                if(is_dir($upload_path)){
+                    $fileO = scandir($upload_path);
+                    if(isset($fileO[2]))
+                        $img = "uploads/product_".$row['id']."/".$fileO[2];
+                    // var_dump($fileO);
+                }
+                foreach($row as $k=> $v){
+                    $row[$k] = trim(stripslashes($v));
+                }
+                $rinventory = $conn->query("SELECT distinct(`price`) FROM inventory where product_id = ".$row['id']." order by `price` asc");
+                $rinv = array();
+                while($ir = $rinventory->fetch_assoc()){
+                    $rinv[] = format_num($ir['price']);
+                }
+                $price = '';
+                if(isset($rinv[0]))
+                $price .= $rinv[0];
+                if(count($rinv) > 1){
+                $price .= " ~ ".$rinv[count($rinv) - 1];
+
+                }
         ?>
+            <div class="col mb-5">
+                <a class="card product-item text-reset text-decoration-none" href=".?p=view_product&id=<?php echo md5($row['id']) ?>">
+                    <!-- Product image-->
+                    <div class="overflow-hidden shadow product-holder">
+                        <img class="card-img-top w-100 product-cover" src="<?php echo validate_image($img) ?>" alt="..." />
+                    </div>
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder"><?php echo $row['name'] ?></h5>
+                            <!-- Product price-->
+                            <span><b class="text-muted">Price: </b><?php echo $price ?></span>
+                            <p class="m-0"><small>Brand: <?php echo $row['bname'] ?></small></p>
+                            <p class="m-0"><small><span class="text-muted">Category:</span> <?php echo $row['category'] ?></small></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <?php endwhile; ?>
+        </div>
     </div>
 </section>
 <script>
