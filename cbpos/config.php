@@ -9,7 +9,7 @@ require_once('classes/DBConnection.php');
 require_once('classes/SystemSettings.php');
 $db = new DBConnection;
 $conn = $db->conn;
-$currency_symbol = 'Ks';
+
 
 function redirect($url=''){
 	if(!empty($url))
