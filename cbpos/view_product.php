@@ -59,7 +59,7 @@
                 
     <span id="price">
 
-        <?php echo isset($inv[0]['price']) ? format_num($inv[0]['price']) : "--" ?>
+        <?<?= format_num($ir['price']) ?>
 
     </span>
                 <br>
