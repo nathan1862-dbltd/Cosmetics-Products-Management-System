@@ -59,7 +59,7 @@
                 
     <span id="price">
 
-        <?<?= format_num($ir['price']) ?>
+        <?= format_num($ir['price']) ?>
 
     </span>
                 <br>
